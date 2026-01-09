@@ -14,7 +14,7 @@ const MOCK_PRODUCTS: Product[] = [
   { 
     id: '1', 
     name: 'MONOLITH OVERSIZED TEE', 
-    price: 65, 
+    price: 25, 
     category: 'ESSENTIALS', 
     image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=800',
     gallery: [
@@ -29,7 +29,7 @@ const MOCK_PRODUCTS: Product[] = [
   { 
     id: '2', 
     name: 'PHANTOM UTILITY PANTS', 
-    price: 155, 
+    price: 25, 
     category: 'BOTTOMS', 
     image: 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=800',
     gallery: [
@@ -43,7 +43,7 @@ const MOCK_PRODUCTS: Product[] = [
   { 
     id: '3', 
     name: 'CYBER-CORE HOODIE', 
-    price: 125, 
+    price: 25, 
     category: 'FLEECE', 
     image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=800',
     gallery: [
@@ -57,7 +57,7 @@ const MOCK_PRODUCTS: Product[] = [
   { 
     id: '4', 
     name: 'GLITCH NYLON VEST', 
-    price: 195, 
+    price: 25, 
     category: 'OUTERWEAR', 
     image: 'https://images.unsplash.com/photo-1614676471928-2ed0ad1061a4?auto=format&fit=crop&q=80&w=800',
     gallery: [
