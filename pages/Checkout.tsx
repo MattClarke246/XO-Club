@@ -17,6 +17,7 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { CartItem } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface CheckoutProps {
   cart: CartItem[];
@@ -24,6 +25,55 @@ interface CheckoutProps {
   onRemove: (id: string, size: string) => void;
   onClearCart: () => void;
 }
+
+const STATE_TAX_RATES: Record<string, number> = {
+  'AL': 0.04, 'AK': 0.00, 'AZ': 0.056, 'AR': 0.065, 'CA': 0.0725,
+  'CO': 0.029, 'CT': 0.0635, 'DE': 0.00, 'FL': 0.06, 'GA': 0.04,
+  'HI': 0.04, 'ID': 0.06, 'IL': 0.0625, 'IN': 0.07, 'IA': 0.06,
+  'KS': 0.065, 'KY': 0.06, 'LA': 0.0445, 'ME': 0.055, 'MD': 0.06,
+  'MA': 0.0625, 'MI': 0.06, 'MN': 0.06875, 'MS': 0.07, 'MO': 0.04225,
+  'MT': 0.00, 'NE': 0.055, 'NV': 0.0685, 'NH': 0.00, 'NJ': 0.06625,
+  'NM': 0.05125, 'NY': 0.04, 'NC': 0.0475, 'ND': 0.05, 'OH': 0.0575,
+  'OK': 0.045, 'OR': 0.00, 'PA': 0.06, 'RI': 0.07, 'SC': 0.06,
+  'SD': 0.045, 'TN': 0.07, 'TX': 0.0625, 'UT': 0.061, 'VT': 0.06,
+  'VA': 0.053, 'WA': 0.065, 'WV': 0.06, 'WI': 0.05, 'WY': 0.04,
+  'DC': 0.06
+};
+
+const US_STATES = [
+  { code: 'AL', name: 'Alabama' }, { code: 'AK', name: 'Alaska' },
+  { code: 'AZ', name: 'Arizona' }, { code: 'AR', name: 'Arkansas' },
+  { code: 'CA', name: 'California' }, { code: 'CO', name: 'Colorado' },
+  { code: 'CT', name: 'Connecticut' }, { code: 'DE', name: 'Delaware' },
+  { code: 'FL', name: 'Florida' }, { code: 'GA', name: 'Georgia' },
+  { code: 'HI', name: 'Hawaii' }, { code: 'ID', name: 'Idaho' },
+  { code: 'IL', name: 'Illinois' }, { code: 'IN', name: 'Indiana' },
+  { code: 'IA', name: 'Iowa' }, { code: 'KS', name: 'Kansas' },
+  { code: 'KY', name: 'Kentucky' }, { code: 'LA', name: 'Louisiana' },
+  { code: 'ME', name: 'Maine' }, { code: 'MD', name: 'Maryland' },
+  { code: 'MA', name: 'Massachusetts' }, { code: 'MI', name: 'Michigan' },
+  { code: 'MN', name: 'Minnesota' }, { code: 'MS', name: 'Mississippi' },
+  { code: 'MO', name: 'Missouri' }, { code: 'MT', name: 'Montana' },
+  { code: 'NE', name: 'Nebraska' }, { code: 'NV', name: 'Nevada' },
+  { code: 'NH', name: 'New Hampshire' }, { code: 'NJ', name: 'New Jersey' },
+  { code: 'NM', name: 'New Mexico' }, { code: 'NY', name: 'New York' },
+  { code: 'NC', name: 'North Carolina' }, { code: 'ND', name: 'North Dakota' },
+  { code: 'OH', name: 'Ohio' }, { code: 'OK', name: 'Oklahoma' },
+  { code: 'OR', name: 'Oregon' }, { code: 'PA', name: 'Pennsylvania' },
+  { code: 'RI', name: 'Rhode Island' }, { code: 'SC', name: 'South Carolina' },
+  { code: 'SD', name: 'South Dakota' }, { code: 'TN', name: 'Tennessee' },
+  { code: 'TX', name: 'Texas' }, { code: 'UT', name: 'Utah' },
+  { code: 'VT', name: 'Vermont' }, { code: 'VA', name: 'Virginia' },
+  { code: 'WA', name: 'Washington' }, { code: 'WV', name: 'West Virginia' },
+  { code: 'WI', name: 'Wisconsin' }, { code: 'WY', name: 'Wyoming' },
+  { code: 'DC', name: 'District of Columbia' }
+];
+
+const getTaxRate = (state: string): number => {
+  if (!state || typeof state !== 'string') return 0.08;
+  const stateCode = state.trim().toUpperCase();
+  return STATE_TAX_RATES[stateCode] ?? 0.08;
+};
 
 const Checkout: React.FC<CheckoutProps> = ({ 
   cart, 
@@ -46,14 +96,15 @@ const Checkout: React.FC<CheckoutProps> = ({
   const [zip, setZip] = useState(''); // Maps to zipCode
   const [stateRegion, setStateRegion] = useState(''); // Visual only
 
-  const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 0), 0);
   const promoDiscount = promoApplied ? subtotal * 0.15 : 0;
   const shippingFee = shippingMethod === 'standard' ? (subtotal > 150 ? 0 : 10) : 0;
-  const tax = (subtotal - promoDiscount) * 0.08;
+  const taxRate = getTaxRate(stateRegion);
+  const taxableAmount = Math.max(0, subtotal - promoDiscount);
+  const tax = taxableAmount * taxRate;
   const total = subtotal - promoDiscount + shippingFee + tax;
 
   const handleProcessOrder = async () => {
-    // 1. Validate all required fields
     if (!email || !firstName || !lastName || !address || !city || !zip) {
       alert('Please ensure all required fields are filled (Name, Email, Address, City, Zip).');
       setStep('info');
@@ -62,50 +113,65 @@ const Checkout: React.FC<CheckoutProps> = ({
 
     setIsProcessing(true);
     
-    // 2. Format Product Name(s) string for the sheet
-    const productName = cart.map(item => 
-      `${item.name} - ${item.selectedSize} (Qty: ${item.quantity})`
-    ).join(' | ');
-
-    // 3. Prepare strict JSON payload
-    const payload = {
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim(),
-      streetAddress: address.trim(),
-      city: city.trim(),
-      zipCode: zip.trim(),
-      productName: productName,
-      totalAmount: total.toFixed(2)
-    };
-
-    // Logging payload for verification as requested
-    console.log('Submitting Order Payload:', payload);
-
     try {
-      // 4. Network Request to Google Apps Script
-      // Note: mode 'no-cors' is used as GAS returns a redirect that usually triggers CORS errors in 'cors' mode
-      const endpoint = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwbo5SMBORJw5NGqzsZYAE_X4wAW2OaiOA_xhKclRGCFdX4pCirM_G5LP2KV1D4d3El/exec';
-      
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      const productDetails = (cart || []).map(item => ({
+        id: item.id || '',
+        name: item.name || '',
+        category: item.category || '',
+        size: item.selectedSize || '',
+        quantity: item.quantity || 0,
+        price: item.price || 0,
+        image: item.image || ''
+      }));
 
-      // 5. Post-submission UX Flow
-      setTimeout(() => {
-        setIsProcessing(false);
-        setStep('success');
-        onClearCart();
-        window.scrollTo(0, 0);
-      }, 1200);
-      
+      const orderData = {
+        first_name: (firstName || '').trim(),
+        last_name: (lastName || '').trim(),
+        email: (email || '').trim().toLowerCase(),
+        street_address: (address || '').trim(),
+        city: (city || '').trim(),
+        zip_code: (zip || '').trim(),
+        state_region: (stateRegion || '').trim() || null,
+        product_details: productDetails,
+        subtotal: parseFloat(subtotal.toFixed(2)),
+        promo_discount: parseFloat(promoDiscount.toFixed(2)),
+        shipping_fee: parseFloat(shippingFee.toFixed(2)),
+        tax_rate: parseFloat(taxRate.toFixed(4)),
+        tax: parseFloat(tax.toFixed(2)),
+        total_amount: parseFloat(total.toFixed(2)),
+        shipping_method: shippingMethod || 'express',
+        promo_applied: promoApplied || false,
+        status: 'pending'
+      };
+
+      console.log('Submitting Order to Supabase:', orderData);
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+      if (supabaseUrl && supabaseAnonKey) {
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([orderData])
+          .select();
+
+        if (error) {
+          console.error('Supabase error:', error);
+          throw error;
+        }
+
+        console.log('Order successfully created:', data);
+      } else {
+        console.warn('Supabase credentials not found. Order data:', orderData);
+      }
+
+      setIsProcessing(false);
+      setStep('success');
+      onClearCart();
+      window.scrollTo(0, 0);
+        
     } catch (error) {
-      console.error('Submission failed:', error);
+      console.error('Order submission failed:', error);
       setIsProcessing(false);
       alert('Order submission failed. Please check your connection and try again.');
     }
@@ -246,12 +312,19 @@ const Checkout: React.FC<CheckoutProps> = ({
                       onChange={(e) => setCity(e.target.value)}
                       className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
                     />
-                    <input 
-                      placeholder="STATE" 
+                    <select
                       value={stateRegion}
                       onChange={(e) => setStateRegion(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
-                    />
+                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest text-white appearance-none cursor-pointer"
+                      style={{ color: stateRegion ? '#fff' : '#666' }}
+                    >
+                      <option value="" className="bg-black text-gray-700">STATE</option>
+                      {US_STATES.map((state) => (
+                        <option key={state.code} value={state.code} className="bg-black text-white">
+                          {state.code} - {state.name}
+                        </option>
+                      ))}
+                    </select>
                     <input 
                       placeholder="ZIP CODE" 
                       value={zip}
@@ -391,6 +464,30 @@ const Checkout: React.FC<CheckoutProps> = ({
                 <span>Subtotal</span>
                 <span className="text-white">${subtotal.toFixed(2)}</span>
               </div>
+              {promoDiscount > 0 && (
+                <div className="flex justify-between text-[11px] font-bold text-green-500 uppercase tracking-widest">
+                  <span>Promo Discount</span>
+                  <span>-${promoDiscount.toFixed(2)}</span>
+                </div>
+              )}
+              {shippingFee > 0 && (
+                <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+                  <span>Shipping</span>
+                  <span className="text-white">${shippingFee.toFixed(2)}</span>
+                </div>
+              )}
+              {stateRegion && tax > 0 && (
+                <div className="flex justify-between text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+                  <span>Tax ({stateRegion} - {(taxRate * 100).toFixed(2)}%)</span>
+                  <span className="text-white">${tax.toFixed(2)}</span>
+                </div>
+              )}
+              {!stateRegion && (
+                <div className="flex justify-between text-[10px] font-bold text-yellow-500 uppercase tracking-widest">
+                  <span>Select State for Tax</span>
+                  <span>$0.00</span>
+                </div>
+              )}
               <div className="flex justify-between items-end pt-8 border-t border-white/10">
                 <div className="space-y-1">
                    <span className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-500 block">Total Due</span>
