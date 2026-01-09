@@ -4,13 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Premium streetwear e-commerce platform with modern UI and AI integration",
-  "keywords": [
-    "ecommerce",
-    "streetwear",
-    "react",
-    "typescript",
-    "vite"
-  ],
+  "keywords": ["ecommerce", "streetwear", "react", "typescript", "vite"],
   "author": "XO Club",
   "license": "UNLICENSED",
   "scripts": {
@@ -20,10 +14,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.90.1",
-    "lucide-react": "^0.562.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "lucide-react": "^0.562.0",
     "react-router-dom": "^7.12.0"
   },
   "devDependencies": {
