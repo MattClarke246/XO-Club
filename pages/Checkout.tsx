@@ -124,6 +124,20 @@ const Checkout: React.FC<CheckoutProps> = ({
         image: item.image || ''
       }));
 
+      const formatNumeric = (value: number, decimals: number = 2): number => {
+        if (typeof value !== 'number' || isNaN(value) || !isFinite(value)) {
+          return 0;
+        }
+        return Number(value.toFixed(decimals));
+      };
+
+      const formatTaxRate = (value: number): number => {
+        if (typeof value !== 'number' || isNaN(value) || !isFinite(value)) {
+          return 0;
+        }
+        return Number(value.toFixed(4));
+      };
+
       const orderData = {
         first_name: (firstName || '').trim(),
         last_name: (lastName || '').trim(),
@@ -132,62 +146,117 @@ const Checkout: React.FC<CheckoutProps> = ({
         city: (city || '').trim(),
         zip_code: (zip || '').trim(),
         state_region: (stateRegion || '').trim() || null,
-        product_details: productDetails,
-        subtotal: parseFloat(subtotal.toFixed(2)),
-        promo_discount: parseFloat(promoDiscount.toFixed(2)),
-        shipping_fee: parseFloat(shippingFee.toFixed(2)),
-        tax_rate: parseFloat(taxRate.toFixed(4)),
-        tax: parseFloat(tax.toFixed(2)),
-        total_amount: parseFloat(total.toFixed(2)),
-        shipping_method: shippingMethod || 'express',
-        promo_applied: promoApplied || false,
+        product_details: Array.isArray(productDetails) && productDetails.length > 0 ? productDetails : [],
+        subtotal: formatNumeric(subtotal, 2),
+        promo_discount: formatNumeric(promoDiscount, 2),
+        shipping_fee: formatNumeric(shippingFee, 2),
+        tax_rate: formatTaxRate(taxRate),
+        tax: formatNumeric(tax, 2),
+        total_amount: formatNumeric(total, 2),
+        shipping_method: (shippingMethod === 'standard' || shippingMethod === 'express') ? shippingMethod : 'express',
+        promo_applied: Boolean(promoApplied),
         status: 'pending'
       };
 
-      console.log('Submitting Order to Supabase:', orderData);
-
-      if (supabase) {
-        try {
-          const { data, error } = await supabase
-            .from('orders')
-            .insert([orderData])
-            .select();
-
-          if (error) {
-            console.error('Supabase error:', error);
-            console.error('Error details:', {
-              message: error.message,
-              details: error.details,
-              hint: error.hint,
-              code: error.code
-            });
-            
-            const errorMessage = error.message || '';
-            if (errorMessage.includes('relation "orders" does not exist')) {
-              console.error('ERROR: Orders table does not exist in Supabase. Please run the SQL schema.');
-            } else if (errorMessage.includes('Row Level Security') || errorMessage.includes('permission')) {
-              console.error('ERROR: RLS policy issue. Check Supabase policies.');
-            }
-          } else if (data) {
-            console.log('Order successfully created in Supabase:', data);
-          }
-        } catch (dbError: any) {
-          console.error('Database submission error:', dbError);
-          console.warn('Order will proceed but may not be saved to database. Check console for details.');
-        }
-      } else {
-        console.warn('Supabase client not initialized. Order data:', orderData);
+      if (!orderData.email || !orderData.first_name || !orderData.last_name || !orderData.street_address || !orderData.city || !orderData.zip_code) {
+        alert('Please fill in all required fields.');
+        setIsProcessing(false);
+        return;
       }
 
+      if (!Array.isArray(orderData.product_details) || orderData.product_details.length === 0) {
+        alert('Cart is empty. Cannot place order.');
+        setIsProcessing(false);
+        return;
+      }
+
+      console.log('📤 Submitting Order to Supabase:', orderData);
+      console.log('Supabase client status:', supabase ? '✅ Initialized' : '❌ Not initialized');
+
+      if (!supabase) {
+        console.error('❌ Supabase client is null - cannot save order');
+        alert('Database connection error. Please refresh the page and try again.');
+        setIsProcessing(false);
+        return;
+      }
+
+      let orderSaved = false;
+      
+      try {
+        console.log('🔄 Attempting to insert order into Supabase orders table...');
+        const { data, error } = await supabase
+          .from('orders')
+          .insert([orderData])
+          .select();
+
+        if (error) {
+          console.error('❌ Supabase INSERT ERROR:', error);
+          console.error('Error Code:', error.code);
+          console.error('Error Message:', error.message);
+          console.error('Error Details:', error.details);
+          console.error('Error Hint:', error.hint);
+          
+          const errorMessage = error.message || '';
+          
+          if (errorMessage.includes('relation "orders" does not exist')) {
+            alert('❌ Database table not found. Please ensure the orders table is created in Supabase.\n\nGo to Supabase Dashboard → SQL Editor → Run the schema SQL.');
+            setIsProcessing(false);
+            return;
+          } else if (errorMessage.includes('Row Level Security') || errorMessage.includes('permission') || errorMessage.includes('RLS')) {
+            alert('❌ Permission denied. Please check Supabase Row Level Security policies allow public inserts.\n\nGo to Supabase Dashboard → Authentication → Policies → Allow public inserts.');
+            setIsProcessing(false);
+            return;
+          } else if (errorMessage.includes('violates') || errorMessage.includes('constraint')) {
+            alert(`❌ Data validation error: ${errorMessage}\n\nCheck console for details.`);
+            setIsProcessing(false);
+            return;
+          } else {
+            alert(`❌ Database error: ${errorMessage}\n\nCheck console for details and try again.`);
+            setIsProcessing(false);
+            return;
+          }
+        }
+
+        if (data && Array.isArray(data) && data.length > 0) {
+          console.log('✅ Order successfully created in Supabase!');
+          console.log('✅ Order ID:', data[0].id);
+          console.log('✅ Full order data:', JSON.stringify(data[0], null, 2));
+          orderSaved = true;
+        } else {
+          console.warn('⚠️ Insert succeeded but no data returned');
+          console.warn('Response:', { data, error });
+          orderSaved = true;
+        }
+      } catch (dbError: any) {
+        console.error('❌ Exception during database insert:', dbError);
+        console.error('Exception type:', typeof dbError);
+        console.error('Exception message:', dbError?.message);
+        console.error('Exception stack:', dbError?.stack);
+        alert(`❌ Failed to save order: ${dbError?.message || 'Unknown error'}\n\nCheck console for details.`);
+        setIsProcessing(false);
+        return;
+      }
+
+      if (!orderSaved) {
+        console.error('❌ Order was not saved to database');
+        alert('❌ Order could not be saved to database. Please try again.');
+        setIsProcessing(false);
+        return;
+      }
+
+      console.log('✅ Order processed successfully - proceeding to success page');
       setIsProcessing(false);
       setStep('success');
       onClearCart();
       window.scrollTo(0, 0);
         
     } catch (error: any) {
-      console.error('Order submission failed:', error);
+      console.error('❌ Order submission failed with exception:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
       setIsProcessing(false);
-      alert('Order submission failed. Please check your connection and try again.');
+      alert('❌ Order submission failed. Please check your connection and try again.');
     }
   };
 
