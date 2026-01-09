@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import SocialProof from '../components/SocialProof';
+import BrandStoryModal from '../components/BrandStoryModal';
 import { Product } from '../types';
 
 interface HomeProps {
@@ -71,6 +72,8 @@ const MOCK_PRODUCTS: Product[] = [
 ];
 
 const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
+  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
+
   return (
     <div className="flex flex-col">
       <Hero />
@@ -104,7 +107,10 @@ const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
             <p className="text-gray-300 text-lg md:text-xl mb-10 font-medium leading-relaxed uppercase">
               QUALITY OVER EVERYTHING. <br />STREETWEAR THAT SURVIVES THE HYPE.
             </p>
-            <button className="bg-white text-black px-12 py-5 rounded-full font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-500 uppercase active:scale-95 shadow-2xl">
+            <button 
+              onClick={() => setIsStoryModalOpen(true)}
+              className="bg-white text-black px-12 py-5 rounded-full font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-500 uppercase active:scale-95 shadow-2xl"
+            >
               OUR STORY
             </button>
           </div>
@@ -132,6 +138,11 @@ const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
           </div>
         </div>
       </section>
+
+      <BrandStoryModal 
+        isOpen={isStoryModalOpen} 
+        onClose={() => setIsStoryModalOpen(false)} 
+      />
     </div>
   );
 };
