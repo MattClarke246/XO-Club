@@ -17,6 +17,7 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { CartItem } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface CheckoutProps {
   cart: CartItem[];
@@ -53,7 +54,6 @@ const Checkout: React.FC<CheckoutProps> = ({
   const total = subtotal - promoDiscount + shippingFee + tax;
 
   const handleProcessOrder = async () => {
-    // 1. Validate all required fields
     if (!email || !firstName || !lastName || !address || !city || !zip) {
       alert('Please ensure all required fields are filled (Name, Email, Address, City, Zip).');
       setStep('info');
@@ -62,50 +62,57 @@ const Checkout: React.FC<CheckoutProps> = ({
 
     setIsProcessing(true);
     
-    // 2. Format Product Name(s) string for the sheet
-    const productName = cart.map(item => 
-      `${item.name} - ${item.selectedSize} (Qty: ${item.quantity})`
-    ).join(' | ');
+    const productDetails = cart.map(item => ({
+      id: item.id,
+      name: item.name,
+      category: item.category,
+      size: item.selectedSize,
+      quantity: item.quantity,
+      price: item.price,
+      image: item.image
+    }));
 
-    // 3. Prepare strict JSON payload
-    const payload = {
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim(),
-      streetAddress: address.trim(),
+    const orderData = {
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      email: email.trim().toLowerCase(),
+      street_address: address.trim(),
       city: city.trim(),
-      zipCode: zip.trim(),
-      productName: productName,
-      totalAmount: total.toFixed(2)
+      zip_code: zip.trim(),
+      state_region: stateRegion.trim() || null,
+      product_details: productDetails,
+      subtotal: subtotal.toFixed(2),
+      promo_discount: promoDiscount.toFixed(2),
+      shipping_fee: shippingFee.toFixed(2),
+      tax: tax.toFixed(2),
+      total_amount: total.toFixed(2),
+      shipping_method: shippingMethod,
+      promo_applied: promoApplied,
+      status: 'pending'
     };
 
-    // Logging payload for verification as requested
-    console.log('Submitting Order Payload:', payload);
+    console.log('Submitting Order to Supabase:', orderData);
 
     try {
-      // 4. Network Request to Google Apps Script
-      // Note: mode 'no-cors' is used as GAS returns a redirect that usually triggers CORS errors in 'cors' mode
-      const endpoint = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbwbo5SMBORJw5NGqzsZYAE_X4wAW2OaiOA_xhKclRGCFdX4pCirM_G5LP2KV1D4d3El/exec';
-      
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      const { data, error } = await supabase
+        .from('orders')
+        .insert([orderData])
+        .select();
 
-      // 5. Post-submission UX Flow
-      setTimeout(() => {
-        setIsProcessing(false);
-        setStep('success');
-        onClearCart();
-        window.scrollTo(0, 0);
-      }, 1200);
-      
+      if (error) {
+        console.error('Supabase error:', error);
+        throw error;
+      }
+
+      console.log('Order successfully created:', data);
+
+      setIsProcessing(false);
+      setStep('success');
+      onClearCart();
+      window.scrollTo(0, 0);
+        
     } catch (error) {
-      console.error('Submission failed:', error);
+      console.error('Order submission failed:', error);
       setIsProcessing(false);
       alert('Order submission failed. Please check your connection and try again.');
     }
