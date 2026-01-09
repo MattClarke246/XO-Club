@@ -146,23 +146,37 @@ const Checkout: React.FC<CheckoutProps> = ({
 
       console.log('Submitting Order to Supabase:', orderData);
 
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      if (supabase) {
+        try {
+          const { data, error } = await supabase
+            .from('orders')
+            .insert([orderData])
+            .select();
 
-      if (supabaseUrl && supabaseAnonKey) {
-        const { data, error } = await supabase
-          .from('orders')
-          .insert([orderData])
-          .select();
-
-        if (error) {
-          console.error('Supabase error:', error);
-          throw error;
+          if (error) {
+            console.error('Supabase error:', error);
+            console.error('Error details:', {
+              message: error.message,
+              details: error.details,
+              hint: error.hint,
+              code: error.code
+            });
+            
+            const errorMessage = error.message || '';
+            if (errorMessage.includes('relation "orders" does not exist')) {
+              console.error('ERROR: Orders table does not exist in Supabase. Please run the SQL schema.');
+            } else if (errorMessage.includes('Row Level Security') || errorMessage.includes('permission')) {
+              console.error('ERROR: RLS policy issue. Check Supabase policies.');
+            }
+          } else if (data) {
+            console.log('Order successfully created in Supabase:', data);
+          }
+        } catch (dbError: any) {
+          console.error('Database submission error:', dbError);
+          console.warn('Order will proceed but may not be saved to database. Check console for details.');
         }
-
-        console.log('Order successfully created:', data);
       } else {
-        console.warn('Supabase credentials not found. Order data:', orderData);
+        console.warn('Supabase client not initialized. Order data:', orderData);
       }
 
       setIsProcessing(false);
@@ -170,7 +184,7 @@ const Checkout: React.FC<CheckoutProps> = ({
       onClearCart();
       window.scrollTo(0, 0);
         
-    } catch (error) {
+    } catch (error: any) {
       console.error('Order submission failed:', error);
       setIsProcessing(false);
       alert('Order submission failed. Please check your connection and try again.');
