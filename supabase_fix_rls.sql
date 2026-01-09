@@ -1,3 +1,4 @@
+-- First, ensure the table exists (if it doesn't, this won't fail)
 CREATE TABLE IF NOT EXISTS orders (
   id BIGSERIAL PRIMARY KEY,
   first_name TEXT NOT NULL,
@@ -20,20 +21,24 @@ CREATE TABLE IF NOT EXISTS orders (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Create indexes if they don't exist
 CREATE INDEX IF NOT EXISTS idx_orders_email ON orders(email);
 CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
 CREATE INDEX IF NOT EXISTS idx_orders_state ON orders(state_region);
 
+-- Enable RLS
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
--- Drop all existing policies
+-- Drop any existing policies (this won't fail if they don't exist)
 DROP POLICY IF EXISTS "Allow public inserts" ON orders;
 DROP POLICY IF EXISTS "Enable insert for all users" ON orders;
 DROP POLICY IF EXISTS "Allow anonymous inserts" ON orders;
 DROP POLICY IF EXISTS "Enable insert for anonymous users" ON orders;
+DROP POLICY IF EXISTS "Allow authenticated inserts" ON orders;
 
 -- Create policy for anonymous users (anon role) - this is what Supabase uses for unauthenticated requests
+-- The anon key uses the 'anon' role, not 'public'
 CREATE POLICY "Allow anonymous inserts" 
 ON orders
 FOR INSERT 
