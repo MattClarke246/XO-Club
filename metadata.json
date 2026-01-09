@@ -1,0 +1,7 @@
+{
+  "name": "XO Club - Street Luxury",
+  "description": "A high-conversion premium streetwear e-commerce platform with bold typography, immersive animations, and limited drop mechanics.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
