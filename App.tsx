@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AnimatedBackground from './components/AnimatedBackground';
 import Home from './pages/Home';
+import Shop from './pages/Shop';
 import Checkout from './pages/Checkout';
 import ProductPreviewModal from './components/ProductPreviewModal';
 import CartSidebar from './components/CartSidebar';
@@ -81,6 +82,7 @@ const AppContent: React.FC = () => {
       <main>
         <Routes>
           <Route path="/" element={<Home onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
+          <Route path="/shop" element={<Shop onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
           <Route path="/checkout" element={
             <Checkout 
               cart={cart} 

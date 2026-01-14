@@ -1,13 +1,11 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import Hero from '../components/Hero';
+import { ChevronLeft } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
-import SocialProof from '../components/SocialProof';
-import BrandStoryModal from '../components/BrandStoryModal';
 import { Product } from '../types';
 
-interface HomeProps {
+interface ShopProps {
   onPreview: (product: Product) => void;
   onAddToCart: (product: Product, size: string) => void;
 }
@@ -76,80 +74,47 @@ const MOCK_PRODUCTS: Product[] = [
   },
 ];
 
-const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
-  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
-
+const Shop: React.FC<ShopProps> = ({ onPreview, onAddToCart }) => {
   return (
-    <div className="flex flex-col">
-      <Hero />
-      
-      {/* Featured Drop Section */}
-      <section className="py-32 container mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div className="max-w-2xl">
-            <h2 className="text-6xl md:text-8xl font-black text-tight mb-6 uppercase">NEW<br />CURATION</h2>
-            <p className="text-blue-500 font-black tracking-[0.3em] uppercase text-xs">DROP 042 // WINTER ARCHIVE</p>
-          </div>
-          <Link to="/shop" className="text-xs font-black tracking-[0.4em] text-white border-b border-white/20 pb-3 hover:text-blue-500 hover:border-blue-500 transition-all uppercase">
-            SHOP THE DROP
+    <div className="min-h-screen pt-32 pb-32">
+      <div className="container mx-auto px-6">
+        {/* Header Section */}
+        <div className="mb-16">
+          <Link 
+            to="/" 
+            className="inline-flex items-center gap-3 mb-8 text-white/70 hover:text-white transition-colors group"
+          >
+            <div className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-all group-hover:-translate-x-1">
+              <ChevronLeft size={20} />
+            </div>
+            <span className="text-xs font-black tracking-[0.3em] uppercase">BACK TO HOME</span>
           </Link>
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <h1 className="text-6xl md:text-8xl font-black text-tight mb-4 uppercase">DROP 042</h1>
+              <p className="text-blue-500 font-black tracking-[0.3em] uppercase text-xs">WINTER ARCHIVE // NEW CURATION</p>
+            </div>
+            <p className="text-white/60 text-sm font-bold tracking-[0.2em] uppercase">
+              {MOCK_PRODUCTS.length} PIECES
+            </p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
           {MOCK_PRODUCTS.map((product) => (
-            <ProductCard key={product.id} product={product} onPreview={onPreview} onAddToCart={onAddToCart} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              onPreview={onPreview}
+              onAddToCart={onAddToCart}
+            />
           ))}
         </div>
-      </section>
-
-      {/* High-Concept Editorial Banner */}
-      <section className="relative h-screen flex items-center overflow-hidden">
-        <img src="https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&q=80&w=1920" className="absolute inset-0 w-full h-full object-cover brightness-[0.3] grayscale-[0.5]" alt="Editorial" />
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-3xl glass p-10 md:p-16 rounded-3xl border-white/10">
-            <h3 className="text-blue-500 font-black tracking-[0.4em] text-[10px] mb-6 uppercase">THE XO MANIFESTO</h3>
-            <h2 className="text-5xl md:text-8xl font-black text-tight mb-8 uppercase leading-[0.85]">BUILT FOR<br />THE REBEL</h2>
-            <p className="text-gray-300 text-lg md:text-xl mb-10 font-medium leading-relaxed uppercase">
-              QUALITY OVER EVERYTHING. <br />STREETWEAR THAT SURVIVES THE HYPE.
-            </p>
-            <button 
-              onClick={() => setIsStoryModalOpen(true)}
-              className="bg-white text-black px-12 py-5 rounded-full font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-500 uppercase active:scale-95 shadow-2xl"
-            >
-              OUR STORY
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <SocialProof />
-
-      {/* Newsletter Capture */}
-      <section className="py-40 border-t border-white/10">
-        <div className="container mx-auto px-6 max-w-4xl text-center">
-          <h2 className="text-6xl md:text-9xl font-black text-tight mb-10 uppercase">DONT<br />MISS OUT.</h2>
-          <p className="text-gray-500 mb-14 max-w-xl mx-auto font-bold tracking-widest uppercase text-sm">
-            EARLY ACCESS + VIP DROPS. JOIN THE CLUB.
-          </p>
-          <div className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto">
-            <input 
-              type="email" 
-              placeholder="YOUR EMAIL" 
-              className="flex-1 bg-white/5 border border-white/10 rounded-full px-10 py-6 text-white focus:outline-none focus:border-blue-500 transition-all text-xs tracking-widest font-black uppercase"
-            />
-            <button className="bg-white text-black px-12 py-6 rounded-full font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-300 uppercase shadow-2xl">
-              JOIN
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <BrandStoryModal 
-        isOpen={isStoryModalOpen} 
-        onClose={() => setIsStoryModalOpen(false)} 
-      />
+      </div>
     </div>
   );
 };
 
-export default Home;
+export default Shop;
