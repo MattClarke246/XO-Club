@@ -6,9 +6,9 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-[#050505] pt-24 pb-12 border-t border-white/5">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-24">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 mb-24">
           
-          <div className="col-span-2 lg:col-span-2">
+          <div className="col-span-2">
             <a href="#/" className="text-3xl font-black tracking-tighter mb-8 block">XO CLUB<span className="text-blue-500">.</span></a>
             <p className="text-gray-500 max-w-xs mb-8 text-sm leading-relaxed font-light">
               Designing the future of urban luxury. Inspired by culture, driven by creativity.
@@ -19,26 +19,6 @@ const Footer: React.FC = () => {
               <Youtube size={20} className="hover:text-white transition-colors cursor-pointer" />
               <Github size={20} className="hover:text-white transition-colors cursor-pointer" />
             </div>
-          </div>
-
-          <div>
-            <h4 className="text-[10px] font-black tracking-widest text-white mb-8 uppercase">SHOP</h4>
-            <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-white transition-colors">Men's Apparel</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Women's Apparel</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Accessories</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Gift Cards</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-[10px] font-black tracking-widest text-white mb-8 uppercase">COMMUNITY</h4>
-            <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-white transition-colors">Our Story</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Lookbook</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Collaborations</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">The Lab</a></li>
-            </ul>
           </div>
 
           <div>
