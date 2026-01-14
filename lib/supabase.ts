@@ -12,8 +12,9 @@ try {
   if (supabaseUrl && supabaseAnonKey && supabaseUrl.includes('supabase.co') && supabaseAnonKey.length > 10) {
     supabase = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
-        persistSession: false,
-        autoRefreshToken: false,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
       },
       db: {
         schema: 'public',
@@ -38,5 +39,39 @@ try {
   console.error('Error message:', error?.message);
   supabase = null;
 }
+
+// Initialize anonymous authentication
+export const initializeAuth = async () => {
+  if (!supabase) {
+    console.error('❌ Supabase client not initialized');
+    return;
+  }
+
+  try {
+    // Check if there's already a session
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+      // Sign in anonymously - this creates an anonymous user session
+      const { data, error } = await supabase.auth.signInAnonymously();
+      
+      if (error) {
+        console.error('❌ Anonymous sign-in error:', error);
+        // If anonymous sign-in fails, try to continue anyway
+        // The anon key should still work for inserts
+        return;
+      }
+      
+      console.log('✅ Anonymous authentication successful');
+      console.log('👤 User ID:', data.user?.id);
+    } else {
+      console.log('✅ Existing session found');
+      console.log('👤 User ID:', session.user?.id);
+    }
+  } catch (error: any) {
+    console.error('❌ Authentication initialization error:', error);
+    // Continue anyway - anon key should still work
+  }
+};
 
 export { supabase };
