@@ -11,7 +11,6 @@ import Checkout from './pages/Checkout';
 import ProductPreviewModal from './components/ProductPreviewModal';
 import CartSidebar from './components/CartSidebar';
 import { Product, CartItem } from './types';
-import { initializeAuth } from './lib/supabase';
 
 // Define type for ElevenLabs custom element
 declare global {
@@ -36,13 +35,6 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('xo-club-cart', JSON.stringify(cart));
   }, [cart]);
-
-  // Initialize Supabase authentication on app load
-  useEffect(() => {
-    initializeAuth().catch(error => {
-      console.error('Failed to initialize authentication:', error);
-    });
-  }, []);
 
   const addToCart = (product: Product, size: string) => {
     setCart(prev => {
