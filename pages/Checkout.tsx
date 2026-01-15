@@ -183,14 +183,30 @@ const Checkout: React.FC<CheckoutProps> = ({
       let orderSaved = false;
       
       try {
-        console.log('🔄 Attempting to insert order into Supabase orders table...');
-        const { data, error } = await supabase
-          .from('orders')
-          .insert([orderData])
-          .select();
+        console.log('🔄 Attempting to insert order via RPC function...');
+        const { data, error } = await supabase.rpc('insert_order', {
+          // Required parameters (in order)
+          p_first_name: orderData.first_name,
+          p_last_name: orderData.last_name,
+          p_email: orderData.email,
+          p_street_address: orderData.street_address,
+          p_city: orderData.city,
+          p_zip_code: orderData.zip_code,
+          p_product_details: orderData.product_details,
+          p_subtotal: orderData.subtotal,
+          p_tax: orderData.tax,
+          p_total_amount: orderData.total_amount,
+          // Optional parameters (can be omitted, will use defaults)
+          p_state_region: orderData.state_region,
+          p_promo_discount: orderData.promo_discount,
+          p_shipping_fee: orderData.shipping_fee,
+          p_tax_rate: orderData.tax_rate,
+          p_shipping_method: orderData.shipping_method,
+          p_promo_applied: orderData.promo_applied,
+        });
 
         if (error) {
-          console.error('❌ Supabase INSERT ERROR:', error);
+          console.error('❌ Supabase RPC ERROR:', error);
           console.error('Error Code:', error.code);
           console.error('Error Message:', error.message);
           console.error('Error Details:', error.details);
@@ -198,12 +214,8 @@ const Checkout: React.FC<CheckoutProps> = ({
           
           const errorMessage = error.message || '';
           
-          if (errorMessage.includes('relation "orders" does not exist')) {
-            alert('❌ Database table not found. Please ensure the orders table is created in Supabase.\n\nGo to Supabase Dashboard → SQL Editor → Run the schema SQL.');
-            setIsProcessing(false);
-            return;
-          } else if (errorMessage.includes('Row Level Security') || errorMessage.includes('permission') || errorMessage.includes('RLS')) {
-            alert('❌ Permission denied. Please check Supabase Row Level Security policies allow public inserts.\n\nGo to Supabase Dashboard → Authentication → Policies → Allow public inserts.');
+          if (errorMessage.includes('function insert_order') || errorMessage.includes('does not exist')) {
+            alert('❌ Database function not found. Please ensure the insert_order function is created in Supabase.\n\nGo to Supabase Dashboard → SQL Editor → Run the RPC SQL.');
             setIsProcessing(false);
             return;
           } else if (errorMessage.includes('violates') || errorMessage.includes('constraint')) {
@@ -218,12 +230,17 @@ const Checkout: React.FC<CheckoutProps> = ({
         }
 
         if (data && Array.isArray(data) && data.length > 0) {
-          console.log('✅ Order successfully created in Supabase!');
+          console.log('✅ Order successfully created in Supabase via RPC!');
           console.log('✅ Order ID:', data[0].id);
-          console.log('✅ Full order data:', JSON.stringify(data[0], null, 2));
+          console.log('✅ Created At:', data[0].created_at);
+          orderSaved = true;
+        } else if (data) {
+          // RPC returns a different structure, check if it has id
+          console.log('✅ Order successfully created in Supabase via RPC!');
+          console.log('✅ Response:', data);
           orderSaved = true;
         } else {
-          console.warn('⚠️ Insert succeeded but no data returned');
+          console.warn('⚠️ RPC succeeded but no data returned');
           console.warn('Response:', { data, error });
           orderSaved = true;
         }
