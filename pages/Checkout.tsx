@@ -229,20 +229,71 @@ const Checkout: React.FC<CheckoutProps> = ({
           }
         }
 
+        let orderId: number | string | null = null;
+        
         if (data && Array.isArray(data) && data.length > 0) {
           console.log('✅ Order successfully created in Supabase via RPC!');
           console.log('✅ Order ID:', data[0].id);
           console.log('✅ Created At:', data[0].created_at);
+          orderId = data[0].id;
           orderSaved = true;
         } else if (data) {
           // RPC returns a different structure, check if it has id
           console.log('✅ Order successfully created in Supabase via RPC!');
           console.log('✅ Response:', data);
+          orderId = data.id || data[0]?.id || null;
           orderSaved = true;
         } else {
           console.warn('⚠️ RPC succeeded but no data returned');
           console.warn('Response:', { data, error });
           orderSaved = true;
+        }
+
+        // Send order confirmation email via Edge Function
+        if (orderSaved && orderId && orderData.email) {
+          try {
+            console.log('📧 Triggering email send for order:', orderId);
+            
+            const { data: emailData, error: emailError } = await supabase.functions.invoke('send-order-email', {
+              body: {
+                orderId: orderId,
+                orderData: {
+                  email: orderData.email,
+                  firstName: orderData.first_name,
+                  lastName: orderData.last_name,
+                  products: (orderData.product_details || []).map((product: any) => ({
+                    name: product.name || '',
+                    quantity: product.quantity || 1,
+                    size: product.size || '',
+                    price: product.price || 0,
+                  })),
+                  subtotal: orderData.subtotal,
+                  promoDiscount: orderData.promo_discount || 0,
+                  shippingFee: orderData.shipping_fee || 0,
+                  tax: orderData.tax,
+                  totalAmount: orderData.total_amount,
+                  shippingMethod: orderData.shipping_method || 'express',
+                  shippingAddress: {
+                    street: orderData.street_address,
+                    city: orderData.city,
+                    state: orderData.state_region,
+                    zip: orderData.zip_code,
+                  },
+                },
+              },
+            });
+
+            if (emailError) {
+              console.warn('⚠️ Email sending failed:', emailError);
+              // Don't fail the order if email fails - order is already saved
+            } else {
+              console.log('✅ Order confirmation email sent successfully');
+              console.log('📧 Email response:', emailData);
+            }
+          } catch (emailError: any) {
+            console.warn('⚠️ Error sending email:', emailError);
+            // Don't fail the order if email fails - order is already saved
+          }
         }
       } catch (dbError: any) {
         console.error('❌ Exception during database insert:', dbError);
