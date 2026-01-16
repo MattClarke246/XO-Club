@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { CartItem } from '../types';
 import { supabase } from '../lib/supabase';
+import { sendOrderConfirmationEmail } from '../lib/email';
 
 interface CheckoutProps {
   cart: CartItem[];
@@ -229,20 +230,72 @@ const Checkout: React.FC<CheckoutProps> = ({
           }
         }
 
+        let orderId: number | string | null = null;
+        
         if (data && Array.isArray(data) && data.length > 0) {
           console.log('✅ Order successfully created in Supabase via RPC!');
           console.log('✅ Order ID:', data[0].id);
           console.log('✅ Created At:', data[0].created_at);
+          orderId = data[0].id;
           orderSaved = true;
         } else if (data) {
           // RPC returns a different structure, check if it has id
           console.log('✅ Order successfully created in Supabase via RPC!');
           console.log('✅ Response:', data);
+          orderId = data.id || data[0]?.id || null;
           orderSaved = true;
         } else {
           console.warn('⚠️ RPC succeeded but no data returned');
           console.warn('Response:', { data, error });
           orderSaved = true;
+        }
+
+        // Send order confirmation email after order is saved
+        if (orderSaved && orderId && orderData.email) {
+          try {
+            const emailData = {
+              orderId: orderId,
+              orderNumber: `XO-${String(orderId).padStart(5, '0')}`,
+              email: orderData.email,
+              firstName: orderData.first_name,
+              lastName: orderData.last_name,
+              products: (orderData.product_details || []).map((product: any) => ({
+                name: product.name || '',
+                quantity: product.quantity || 1,
+                size: product.size || '',
+                price: product.price || 0,
+              })),
+              subtotal: orderData.subtotal,
+              promoDiscount: orderData.promo_discount,
+              shippingFee: orderData.shipping_fee,
+              tax: orderData.tax,
+              totalAmount: orderData.total_amount,
+              shippingMethod: orderData.shipping_method || 'express',
+              shippingAddress: {
+                street: orderData.street_address,
+                city: orderData.city,
+                state: orderData.state_region,
+                zip: orderData.zip_code,
+              },
+              orderDate: new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              }),
+            };
+            
+            const emailResult = await sendOrderConfirmationEmail(emailData);
+            
+            if (emailResult.success) {
+              console.log('✅ Order confirmation email sent to:', orderData.email);
+            } else {
+              console.warn('⚠️ Order saved but email failed:', emailResult.error);
+              // Don't fail the order if email fails - order is already saved
+            }
+          } catch (emailError: any) {
+            console.error('⚠️ Error sending confirmation email:', emailError);
+            // Don't fail the order if email fails - order is already saved
+          }
         }
       } catch (dbError: any) {
         console.error('❌ Exception during database insert:', dbError);
