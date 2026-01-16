@@ -8,6 +8,9 @@ import AnimatedBackground from './components/AnimatedBackground';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import Checkout from './pages/Checkout';
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import ProductPreviewModal from './components/ProductPreviewModal';
 import CartSidebar from './components/CartSidebar';
 import { Product, CartItem } from './types';
@@ -91,6 +94,15 @@ const AppContent: React.FC = () => {
               onClearCart={clearCart}
             />
           } />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route 
+            path="/admin/dashboard" 
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="*" element={<Home onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
         </Routes>
       </main>
