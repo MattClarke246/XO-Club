@@ -14,19 +14,42 @@ serve(async (req) => {
   }
 
   try {
-    const { orderId, orderData } = await req.json();
+    const body = await req.json();
+    console.log('📧 Edge Function called with body:', JSON.stringify(body, null, 2));
+    
+    const { orderId, orderData } = body;
 
-    if (!orderId || !orderData) {
+    if (!orderId) {
+      console.error('❌ Missing orderId');
       return new Response(
-        JSON.stringify({ error: 'Missing orderId or orderData' }),
+        JSON.stringify({ success: false, error: 'Missing orderId parameter' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (!RESEND_API_KEY) {
-      console.error('RESEND_API_KEY not configured');
+    if (!orderData) {
+      console.error('❌ Missing orderData');
       return new Response(
-        JSON.stringify({ error: 'Email service not configured' }),
+        JSON.stringify({ success: false, error: 'Missing orderData parameter' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!orderData.email) {
+      console.error('❌ Missing email in orderData');
+      return new Response(
+        JSON.stringify({ success: false, error: 'Missing email in orderData' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!RESEND_API_KEY || RESEND_API_KEY === '') {
+      console.error('❌ RESEND_API_KEY not configured');
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'Email service not configured. RESEND_API_KEY secret is missing in Supabase Edge Functions settings.' 
+        }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -74,7 +97,7 @@ serve(async (req) => {
           <tr>
             <td style="padding: 0 40px 30px;">
               <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #ffffff;">
-                Hi ${orderData.firstName},
+                Hi ${orderData.firstName || 'Customer'},
               </p>
               <p style="margin: 20px 0 0; font-size: 16px; line-height: 1.6; color: #cccccc;">
                 Thank you for your order! We're preparing your elite pieces for dispatch.
@@ -146,7 +169,7 @@ serve(async (req) => {
                 SHIPPING ADDRESS
               </h3>
               <p style="margin: 0; font-size: 14px; line-height: 1.8; color: #cccccc;">
-                ${orderData.firstName} ${orderData.lastName}<br>
+                ${orderData.firstName || ''} ${orderData.lastName || ''}<br>
                 ${orderData.shippingAddress.street || ''}<br>
                 ${orderData.shippingAddress.city || ''}${orderData.shippingAddress.state ? `, ${orderData.shippingAddress.state}` : ''} ${orderData.shippingAddress.zip || ''}
               </p>
@@ -180,6 +203,8 @@ serve(async (req) => {
 
     // Call Resend API
     console.log('📧 Sending email to:', orderData.email);
+    console.log('📧 Using API key prefix:', RESEND_API_KEY.substring(0, 5) + '...');
+    
     const resendResponse = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -198,8 +223,13 @@ serve(async (req) => {
 
     if (!resendResponse.ok) {
       console.error('❌ Resend API error:', resendResult);
+      console.error('❌ Resend API status:', resendResponse.status);
       return new Response(
-        JSON.stringify({ success: false, error: resendResult.message || 'Failed to send email' }),
+        JSON.stringify({ 
+          success: false, 
+          error: `Resend API error: ${resendResult.message || 'Unknown error'}`,
+          details: resendResult 
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -212,8 +242,13 @@ serve(async (req) => {
 
   } catch (error: any) {
     console.error('❌ Error in Edge Function:', error);
+    console.error('❌ Error stack:', error.stack);
     return new Response(
-      JSON.stringify({ success: false, error: error.message || 'Unknown error' }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || 'Unknown error',
+        details: error.toString()
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
