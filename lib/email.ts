@@ -204,40 +204,38 @@ const createOrderConfirmationEmail = (data: OrderEmailData): string => {
   `.trim();
 };
 
-// Send order confirmation email using Resend REST API
+// Send order confirmation email via serverless API endpoint
 export const sendOrderConfirmationEmail = async (data: OrderEmailData): Promise<{ success: boolean; error?: string }> => {
-  if (!RESEND_API_KEY) {
-    console.error('❌ Resend API key not configured');
-    return { success: false, error: 'Email service not configured' };
-  }
-
   try {
     const orderNumber = generateOrderNumber(data.orderId);
+    const htmlContent = createOrderConfirmationEmail(data);
     
     console.log('📧 Sending order confirmation email to:', data.email);
     
-    // Use Resend REST API directly via fetch instead of SDK (browser-compatible)
-    const response = await fetch('https://api.resend.com/emails', {
+    // Call our serverless API endpoint (proxied through Vite dev server or direct in production)
+    const apiUrl = import.meta.env.PROD 
+      ? '/api/send-email'  // In production, use relative path (handled by your hosting provider)
+      : '/api/send-email';  // In dev, Vite proxy routes to Express server
+    
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'XO Club <onboarding@resend.dev>',
-        to: data.email,
+        email: data.email,
         subject: `Order Confirmation - ${orderNumber}`,
-        html: createOrderConfirmationEmail(data),
+        html: htmlContent,
       }),
     });
 
     const result = await response.json();
 
     if (!response.ok) {
-      console.error('❌ Resend API error:', result);
+      console.error('❌ Email API error:', result);
       return { 
         success: false, 
-        error: result.message || `HTTP ${response.status}: ${response.statusText}` 
+        error: result.error || `HTTP ${response.status}: ${response.statusText}` 
       };
     }
 
