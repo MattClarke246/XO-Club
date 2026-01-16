@@ -10,7 +10,9 @@ import {
   Clock, 
   Truck, 
   XCircle,
-  Eye
+  Eye,
+  Trash2,
+  AlertTriangle
 } from 'lucide-react';
 
 interface Order {
@@ -47,6 +49,8 @@ const AdminDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updating, setUpdating] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -107,6 +111,33 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const deleteOrder = async (orderId: number) => {
+    try {
+      setDeleting(orderId);
+      const { error } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', orderId);
+
+      if (error) {
+        console.error('Error deleting order:', error);
+        alert('Error deleting order: ' + error.message);
+      } else {
+        // Refresh orders
+        fetchOrders();
+        setDeleteConfirm(null);
+        if (selectedOrder?.id === orderId) {
+          setSelectedOrder(null);
+        }
+      }
+    } catch (error: any) {
+      console.error('Error:', error);
+      alert('Error deleting order');
+    } finally {
+      setDeleting(null);
+    }
+  };
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/admin/login');
@@ -145,8 +176,8 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Header */}
-      <header className="border-b border-white/10 bg-[#050505] sticky top-0 z-50">
+      {/* Header - Fixed with proper spacing */}
+      <header className="fixed top-0 left-0 w-full z-[90] border-b border-white/10 glass backdrop-blur-md">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -159,7 +190,7 @@ const AdminDashboard: React.FC = () => {
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-6 py-3 rounded-xl transition-all text-sm font-black tracking-[0.2em] uppercase"
+              className="flex items-center gap-2 bg-white/5 hover:bg-white/10 px-6 py-3 rounded-xl transition-all text-sm font-black tracking-[0.2em] uppercase border border-white/10 hover:border-white/20"
             >
               <LogOut size={16} />
               Sign Out
@@ -168,43 +199,44 @@ const AdminDashboard: React.FC = () => {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-8">
+      {/* Main Content - Added padding-top to prevent header overlap */}
+      <div className="container mx-auto px-6 pt-24 pb-12">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-            <p className="text-[10px] text-gray-500 font-black tracking-[0.3em] uppercase mb-2">Total Orders</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+            <p className="text-[10px] text-gray-500 font-black tracking-[0.3em] uppercase mb-3">Total Orders</p>
             <p className="text-4xl font-black tracking-tighter">{totalOrders}</p>
           </div>
-          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-6">
-            <p className="text-[10px] text-yellow-500 font-black tracking-[0.3em] uppercase mb-2">Pending</p>
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-6 hover:bg-yellow-500/15 transition-all duration-300">
+            <p className="text-[10px] text-yellow-500 font-black tracking-[0.3em] uppercase mb-3">Pending</p>
             <p className="text-4xl font-black tracking-tighter text-yellow-500">{pendingOrders}</p>
           </div>
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6">
-            <p className="text-[10px] text-blue-500 font-black tracking-[0.3em] uppercase mb-2">Processing</p>
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-2xl p-6 hover:bg-blue-500/15 transition-all duration-300">
+            <p className="text-[10px] text-blue-500 font-black tracking-[0.3em] uppercase mb-3">Processing</p>
             <p className="text-4xl font-black tracking-tighter text-blue-500">{processingOrders}</p>
           </div>
-          <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6">
-            <p className="text-[10px] text-green-500 font-black tracking-[0.3em] uppercase mb-2">Total Revenue</p>
+          <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-6 hover:bg-green-500/15 transition-all duration-300">
+            <p className="text-[10px] text-green-500 font-black tracking-[0.3em] uppercase mb-3">Total Revenue</p>
             <p className="text-4xl font-black tracking-tighter text-green-500">${totalRevenue.toFixed(2)}</p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="flex-1 relative">
-            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600" />
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
             <input
               type="text"
               placeholder="Search orders by email, name, or order ID..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 focus:border-blue-500 outline-none text-sm"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl pl-12 pr-4 py-4 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-bold placeholder:text-gray-600"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-white/5 border border-white/10 rounded-xl px-6 py-3 focus:border-blue-500 outline-none text-sm font-bold uppercase tracking-wider"
+            className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-bold uppercase tracking-wider cursor-pointer"
           >
             <option value="all">All Status</option>
             {STATUS_OPTIONS.map(status => (
@@ -230,32 +262,32 @@ const AdminDashboard: React.FC = () => {
               <table className="w-full">
                 <thead className="bg-white/5 border-b border-white/10">
                   <tr>
-                    <th className="text-left p-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Order #</th>
-                    <th className="text-left p-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Customer</th>
-                    <th className="text-left p-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Products</th>
-                    <th className="text-left p-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Total</th>
-                    <th className="text-left p-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Status</th>
-                    <th className="text-left p-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Date</th>
-                    <th className="text-left p-4 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Actions</th>
+                    <th className="text-left p-5 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Order #</th>
+                    <th className="text-left p-5 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Customer</th>
+                    <th className="text-left p-5 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Products</th>
+                    <th className="text-left p-5 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Total</th>
+                    <th className="text-left p-5 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Status</th>
+                    <th className="text-left p-5 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Date</th>
+                    <th className="text-left p-5 text-[10px] font-black text-gray-500 uppercase tracking-[0.3em]">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredOrders.map((order) => (
                     <tr key={order.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                      <td className="p-4">
+                      <td className="p-5">
                         <p className="font-black text-sm">XO-{String(order.id).padStart(5, '0')}</p>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <p className="font-bold text-sm">{order.first_name} {order.last_name}</p>
                         <p className="text-[11px] text-gray-500 mt-1">{order.email}</p>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <p className="text-sm font-bold">{order.product_details?.length || 0} item(s)</p>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <p className="font-black text-sm">${order.total_amount.toFixed(2)}</p>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <div className="flex items-center gap-2">
                           {getStatusIcon(order.status)}
                           <span className="text-xs font-bold uppercase tracking-wider">
@@ -263,7 +295,7 @@ const AdminDashboard: React.FC = () => {
                           </span>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-5">
                         <p className="text-xs text-gray-500">
                           {new Date(order.created_at).toLocaleDateString()}
                         </p>
@@ -272,17 +304,17 @@ const AdminDashboard: React.FC = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => setSelectedOrder(order)}
-                            className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all"
+                            className="p-2 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/10 hover:border-blue-500/50"
                             title="View Details"
                           >
-                            <Eye size={16} />
+                            <Eye size={16} className="text-gray-400 hover:text-blue-500" />
                           </button>
                           <div className="relative">
                             <select
                               value={order.status}
                               onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                               disabled={updating === order.id}
-                              className="appearance-none bg-white/5 border border-white/10 rounded-lg px-4 py-2 pr-8 text-xs font-bold uppercase tracking-wider focus:border-blue-500 outline-none cursor-pointer disabled:opacity-50"
+                              className="appearance-none bg-white/5 border border-white/10 rounded-xl px-4 py-2 pr-8 text-xs font-bold uppercase tracking-wider focus:border-blue-500 outline-none cursor-pointer disabled:opacity-50 transition-all hover:bg-white/10"
                             >
                               {STATUS_OPTIONS.map(status => (
                                 <option key={status.value} value={status.value}>{status.label}</option>
@@ -290,6 +322,14 @@ const AdminDashboard: React.FC = () => {
                             </select>
                             <ChevronDown size={16} className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500" />
                           </div>
+                          <button
+                            onClick={() => setDeleteConfirm(order.id)}
+                            disabled={deleting === order.id}
+                            className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl transition-all border border-red-500/20 hover:border-red-500/50 disabled:opacity-50"
+                            title="Delete Order"
+                          >
+                            <Trash2 size={16} className="text-red-500" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -301,9 +341,44 @@ const AdminDashboard: React.FC = () => {
         )}
       </div>
 
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setDeleteConfirm(null)}>
+          <div className="bg-[#0a0a0a] border border-red-500/30 rounded-2xl max-w-md w-full p-8" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-red-500/20 rounded-xl border border-red-500/30">
+                <AlertTriangle size={24} className="text-red-500" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-black uppercase tracking-tighter">Delete Order</h2>
+                <p className="text-sm text-gray-500 mt-1">This action cannot be undone</p>
+              </div>
+            </div>
+            <p className="text-gray-400 mb-8">
+              Are you sure you want to delete order <span className="font-black text-white">XO-{String(deleteConfirm).padStart(5, '0')}</span>? This will permanently remove the order from the database.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-6 py-4 font-black text-xs tracking-[0.2em] uppercase transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => deleteOrder(deleteConfirm)}
+                disabled={deleting === deleteConfirm}
+                className="flex-1 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-xl px-6 py-4 font-black text-xs tracking-[0.2em] uppercase transition-all text-red-500 disabled:opacity-50"
+              >
+                {deleting === deleteConfirm ? 'Deleting...' : 'Delete Order'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Order Details Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedOrder(null)}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setSelectedOrder(null)}>
           <div className="bg-[#0a0a0a] border border-white/10 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="p-6 border-b border-white/10 flex items-center justify-between">
               <h2 className="text-2xl font-black uppercase tracking-tighter">
@@ -311,9 +386,9 @@ const AdminDashboard: React.FC = () => {
               </h2>
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-all"
+                className="p-2 hover:bg-white/10 rounded-xl transition-all border border-white/10 hover:border-red-500/50"
               >
-                <XCircle size={24} />
+                <XCircle size={24} className="text-gray-400 hover:text-red-500" />
               </button>
             </div>
             <div className="p-6 space-y-6">
@@ -388,12 +463,24 @@ const AdminDashboard: React.FC = () => {
                     updateOrderStatus(selectedOrder.id, e.target.value);
                     setSelectedOrder({ ...selectedOrder, status: e.target.value });
                   }}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold uppercase tracking-wider focus:border-blue-500 outline-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm font-bold uppercase tracking-wider focus:border-blue-500 outline-none transition-all hover:bg-white/10"
                 >
                   {STATUS_OPTIONS.map(status => (
                     <option key={status.value} value={status.value}>{status.label}</option>
                   ))}
                 </select>
+              </div>
+              <div className="pt-4 border-t border-white/10">
+                <button
+                  onClick={() => {
+                    setDeleteConfirm(selectedOrder.id);
+                    setSelectedOrder(null);
+                  }}
+                  className="w-full bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 rounded-xl px-6 py-4 font-black text-xs tracking-[0.2em] uppercase transition-all text-red-500 flex items-center justify-center gap-2"
+                >
+                  <Trash2 size={16} />
+                  Delete Order
+                </button>
               </div>
             </div>
           </div>
