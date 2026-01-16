@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# API directory (email functionality removed)
+api/
+lib/email.ts
+vercel.json
