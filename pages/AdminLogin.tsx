@@ -95,9 +95,9 @@ const AdminLogin: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="ADMIN@XOCLUB.COM"
+                placeholder="admin@xoclub.com"
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-5 focus:border-blue-500 outline-none transition-all text-sm font-bold placeholder:text-gray-700"
               />
             </div>
           </div>
@@ -114,7 +114,7 @@ const AdminLogin: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-5 focus:border-blue-500 outline-none transition-all text-sm font-bold placeholder:text-gray-700"
               />
             </div>
           </div>

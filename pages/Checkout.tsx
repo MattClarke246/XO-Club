@@ -284,15 +284,23 @@ const Checkout: React.FC<CheckoutProps> = ({
             });
 
             if (emailError) {
-              console.warn('⚠️ Email sending failed:', emailError);
-              // Don't fail the order if email fails - order is already saved
+              console.error('❌ Email sending failed:', emailError);
+              console.error('Email error details:', JSON.stringify(emailError, null, 2));
+              // Show user-friendly error message but don't fail the order
+              alert(`⚠️ Order saved successfully, but confirmation email could not be sent.\n\nError: ${emailError.message || 'Email service unavailable'}\n\nPlease check your email or contact support.`);
             } else {
               console.log('✅ Order confirmation email sent successfully');
               console.log('📧 Email response:', emailData);
             }
           } catch (emailError: any) {
-            console.warn('⚠️ Error sending email:', emailError);
-            // Don't fail the order if email fails - order is already saved
+            console.error('❌ Exception sending email:', emailError);
+            console.error('Email exception details:', {
+              message: emailError?.message,
+              stack: emailError?.stack,
+              type: typeof emailError
+            });
+            // Show user-friendly error message but don't fail the order
+            alert(`⚠️ Order saved successfully, but confirmation email could not be sent.\n\nPlease check your email or contact support.`);
           }
         }
       } catch (dbError: any) {
@@ -419,8 +427,8 @@ const Checkout: React.FC<CheckoutProps> = ({
                     type="email" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="EMAIL ADDRESS" 
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
+                    placeholder="Email address" 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-bold placeholder:text-gray-700" 
                   />
                 </section>
 
@@ -431,16 +439,16 @@ const Checkout: React.FC<CheckoutProps> = ({
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <input 
-                      placeholder="FIRST NAME" 
+                      placeholder="First name" 
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
+                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-bold placeholder:text-gray-700" 
                     />
                     <input 
-                      placeholder="LAST NAME" 
+                      placeholder="Last name" 
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
+                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-bold placeholder:text-gray-700" 
                     />
                   </div>
                 </section>
@@ -451,25 +459,25 @@ const Checkout: React.FC<CheckoutProps> = ({
                     <h3 className="text-xs font-black tracking-[0.3em] text-white uppercase">Address Details</h3>
                   </div>
                   <input 
-                    placeholder="STREET ADDRESS" 
+                    placeholder="Street address" 
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 focus:bg-white/10 outline-none transition-all text-sm font-bold placeholder:text-gray-700" 
                   />
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                     <input 
-                      placeholder="CITY" 
+                      placeholder="City" 
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
+                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-bold placeholder:text-gray-700" 
                     />
                     <select
                       value={stateRegion}
                       onChange={(e) => setStateRegion(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest text-white appearance-none cursor-pointer"
+                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-bold text-white appearance-none cursor-pointer"
                       style={{ color: stateRegion ? '#fff' : '#666' }}
                     >
-                      <option value="" className="bg-black text-gray-700">STATE</option>
+                      <option value="" className="bg-black text-gray-700">State</option>
                       {US_STATES.map((state) => (
                         <option key={state.code} value={state.code} className="bg-black text-white">
                           {state.code} - {state.name}
@@ -477,10 +485,10 @@ const Checkout: React.FC<CheckoutProps> = ({
                       ))}
                     </select>
                     <input 
-                      placeholder="ZIP CODE" 
+                      placeholder="Zip code" 
                       value={zip}
                       onChange={(e) => setZip(e.target.value)}
-                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black uppercase tracking-widest placeholder:text-gray-700" 
+                      className="bg-white/5 border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-bold placeholder:text-gray-700" 
                     />
                   </div>
                 </section>

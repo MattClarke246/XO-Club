@@ -7,14 +7,9 @@ export default defineConfig(({ mode }) => {
     return {
       server: {
         port: 3000,
-        host: '0.0.0.0',
-        proxy: {
-          '/api': {
-            target: 'http://localhost:3001',
-            changeOrigin: true,
-            secure: false,
-          }
-        }
+        host: true, // Allows access from network and localhost (Safari compatible)
+        strictPort: false, // Try next available port if 3000 is in use
+        open: false, // Don't auto-open browser
       },
       plugins: [react()],
       define: {
