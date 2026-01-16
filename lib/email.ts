@@ -1,8 +1,5 @@
-import { Resend } from 'resend';
-
+// Resend REST API configuration - using fetch directly instead of SDK for browser compatibility
 const RESEND_API_KEY = import.meta.env.VITE_RESEND_API_KEY || 're_axj174Uj_6RpBrsQcFZj7qow55zC2T8up';
-
-const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
 
 export interface OrderEmailData {
   orderId: number | string;
@@ -207,9 +204,9 @@ const createOrderConfirmationEmail = (data: OrderEmailData): string => {
   `.trim();
 };
 
-// Send order confirmation email
+// Send order confirmation email using Resend REST API
 export const sendOrderConfirmationEmail = async (data: OrderEmailData): Promise<{ success: boolean; error?: string }> => {
-  if (!resend) {
+  if (!RESEND_API_KEY) {
     console.error('❌ Resend API key not configured');
     return { success: false, error: 'Email service not configured' };
   }
@@ -219,20 +216,33 @@ export const sendOrderConfirmationEmail = async (data: OrderEmailData): Promise<
     
     console.log('📧 Sending order confirmation email to:', data.email);
     
-    const result = await resend.emails.send({
-      from: 'XO Club <onboarding@resend.dev>',
-      to: data.email,
-      subject: `Order Confirmation - ${orderNumber}`,
-      html: createOrderConfirmationEmail(data),
+    // Use Resend REST API directly via fetch instead of SDK (browser-compatible)
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'XO Club <onboarding@resend.dev>',
+        to: data.email,
+        subject: `Order Confirmation - ${orderNumber}`,
+        html: createOrderConfirmationEmail(data),
+      }),
     });
 
-    if (result.error) {
-      console.error('❌ Resend email error:', result.error);
-      return { success: false, error: result.error.message || 'Failed to send email' };
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('❌ Resend API error:', result);
+      return { 
+        success: false, 
+        error: result.message || `HTTP ${response.status}: ${response.statusText}` 
+      };
     }
 
     console.log('✅ Order confirmation email sent successfully');
-    console.log('📧 Email ID:', result.data?.id);
+    console.log('📧 Email ID:', result.id);
     return { success: true };
   } catch (error: any) {
     console.error('❌ Exception sending email:', error);
