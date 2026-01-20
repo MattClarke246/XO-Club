@@ -1,17 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { Product } from '../types';
-import { getShopifyProducts } from '../lib/shopify';
 
 interface ShopProps {
   onPreview: (product: Product) => void;
   onAddToCart: (product: Product, size: string) => void;
 }
 
-// Fallback products if Shopify is not configured
 const MOCK_PRODUCTS: Product[] = [
   { 
     id: '1', 
@@ -77,33 +75,6 @@ const MOCK_PRODUCTS: Product[] = [
 ];
 
 const Shop: React.FC<ShopProps> = ({ onPreview, onAddToCart }) => {
-  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch products from Shopify, fallback to mock products
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const shopifyProducts = await getShopifyProducts(50);
-        if (shopifyProducts.length > 0) {
-          setProducts(shopifyProducts);
-          console.log('✅ Using Shopify products');
-        } else {
-          console.log('⚠️ No Shopify products found, using fallback products');
-          setProducts(MOCK_PRODUCTS);
-        }
-      } catch (error) {
-        console.error('❌ Error fetching Shopify products:', error);
-        setProducts(MOCK_PRODUCTS);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
   return (
     <div className="min-h-screen pt-32 pb-32">
       <div className="container mx-auto px-6">
@@ -125,34 +96,22 @@ const Shop: React.FC<ShopProps> = ({ onPreview, onAddToCart }) => {
               <p className="text-blue-500 font-black tracking-[0.3em] uppercase text-xs">WINTER ARCHIVE // NEW CURATION</p>
             </div>
             <p className="text-white/60 text-sm font-bold tracking-[0.2em] uppercase">
-              {loading ? '...' : products.length} PIECES
+              {MOCK_PRODUCTS.length} PIECES
             </p>
           </div>
         </div>
 
         {/* Products Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-              <div key={i} className="aspect-[3/4] bg-white/5 rounded-2xl animate-pulse" />
-            ))}
-          </div>
-        ) : products.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-gray-500 font-bold tracking-[0.2em] uppercase text-xs">No products available</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onPreview={onPreview}
-                onAddToCart={onAddToCart}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+          {MOCK_PRODUCTS.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              onPreview={onPreview}
+              onAddToCart={onAddToCart}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,19 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import SocialProof from '../components/SocialProof';
 import BrandStoryModal from '../components/BrandStoryModal';
 import { Product } from '../types';
-import { getShopifyProducts } from '../lib/shopify';
 
 interface HomeProps {
   onPreview: (product: Product) => void;
   onAddToCart: (product: Product, size: string) => void;
 }
 
-// Fallback products if Shopify is not configured
 const MOCK_PRODUCTS: Product[] = [
   { 
     id: '1', 
@@ -80,32 +78,6 @@ const MOCK_PRODUCTS: Product[] = [
 
 const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch products from Shopify, fallback to mock products
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        const shopifyProducts = await getShopifyProducts(10);
-        if (shopifyProducts.length > 0) {
-          setProducts(shopifyProducts);
-          console.log('✅ Using Shopify products');
-        } else {
-          console.log('⚠️ No Shopify products found, using fallback products');
-          setProducts(MOCK_PRODUCTS);
-        }
-      } catch (error) {
-        console.error('❌ Error fetching Shopify products:', error);
-        setProducts(MOCK_PRODUCTS);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
 
   return (
     <div className="flex flex-col">
@@ -123,19 +95,11 @@ const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
           </Link>
         </div>
 
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="aspect-[3/4] bg-white/5 rounded-2xl animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} onPreview={onPreview} onAddToCart={onAddToCart} />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          {MOCK_PRODUCTS.map((product) => (
+            <ProductCard key={product.id} product={product} onPreview={onPreview} onAddToCart={onAddToCart} />
+          ))}
+        </div>
       </section>
 
       {/* High-Concept Editorial Banner */}

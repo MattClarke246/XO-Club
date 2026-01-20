@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { CartItem } from '../types';
 import { supabase } from '../lib/supabase';
-import ShopifyCheckout from '../components/ShopifyCheckout';
 
 interface CheckoutProps {
   cart: CartItem[];
@@ -555,7 +554,7 @@ const Checkout: React.FC<CheckoutProps> = ({
                 <section>
                   <div className="flex items-center gap-3 mb-8">
                     <CreditCard size={16} className="text-blue-500" />
-                    <h3 className="text-xs font-black tracking-[0.3em] text-white uppercase">Secure Checkout</h3>
+                    <h3 className="text-xs font-black tracking-[0.3em] text-white uppercase">Secure Payment</h3>
                   </div>
                   <div className="glass p-10 rounded-[2.5rem] border-white/10 space-y-8">
                     <div className="flex justify-between items-center pb-6 border-b border-white/5">
@@ -563,34 +562,34 @@ const Checkout: React.FC<CheckoutProps> = ({
                          <div className="w-10 h-6 bg-white/10 rounded-md flex items-center justify-center text-[8px] font-black">VISA</div>
                          <div className="w-10 h-6 bg-white/10 rounded-md flex items-center justify-center text-[8px] font-black">M/C</div>
                          <div className="w-10 h-6 bg-white/10 rounded-md flex items-center justify-center text-[8px] font-black">AMEX</div>
-                         <div className="w-10 h-6 bg-white/10 rounded-md flex items-center justify-center text-[8px] font-black">SHOP</div>
                       </div>
                       <Lock size={16} className="text-gray-600" />
                     </div>
-                    <div className="space-y-4">
-                      <p className="text-sm text-gray-400 leading-relaxed">
-                        Your order will be processed securely through Shopify. You'll be redirected to complete payment, taxes, and shipping.
-                      </p>
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
-                        <ShieldCheck size={14} />
-                        <span>Secure SSL encryption</span>
+                    <div className="space-y-6">
+                      <div className="space-y-3">
+                        <p className="text-[9px] font-black text-gray-500 tracking-[0.2em] uppercase px-2">Card Number</p>
+                        <input placeholder="0000 0000 0000 0000" className="w-full bg-black border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black tracking-[0.2em]" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-6">
+                        <div className="space-y-3">
+                          <p className="text-[9px] font-black text-gray-500 tracking-[0.2em] uppercase px-2">Expiry Date</p>
+                          <input placeholder="MM / YY" className="w-full bg-black border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black tracking-[0.2em]" />
+                        </div>
+                        <div className="space-y-3">
+                          <p className="text-[9px] font-black text-gray-500 tracking-[0.2em] uppercase px-2">CVC Code</p>
+                          <input placeholder="***" className="w-full bg-black border border-white/10 rounded-2xl px-8 py-5 focus:border-blue-500 outline-none transition-all text-sm font-black tracking-[0.2em]" />
+                        </div>
                       </div>
                     </div>
                   </div>
                 </section>
                 <div className="flex flex-col gap-6">
-                  <ShopifyCheckout 
-                    cart={cart}
-                    onComplete={() => {
-                      onClearCart();
-                      setStep('success');
-                    }}
-                  />
                   <button 
-                    onClick={() => setStep('shipping')}
-                    className="px-10 py-6 border border-white/10 rounded-[1.5rem] font-black text-[10px] tracking-[0.3em] uppercase hover:bg-white/5 transition-all"
+                    onClick={handleProcessOrder}
+                    disabled={isProcessing}
+                    className="group relative flex items-center justify-center gap-4 w-full bg-white text-black py-8 rounded-[2rem] font-black text-sm tracking-[0.5em] uppercase hover:bg-blue-500 hover:text-white transition-all shadow-[0_20px_60px_rgba(0,0,0,0.5)] disabled:opacity-50"
                   >
-                    Go Back
+                    {isProcessing ? (<><div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />Processing...</>) : (<><Lock size={18} />PLACE ORDER - ${total.toFixed(2)}</>)}
                   </button>
                 </div>
               </div>
