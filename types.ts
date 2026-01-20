@@ -12,6 +12,15 @@ export interface Product {
   isNew?: boolean;
   isLimited?: boolean;
   stockStatus?: 'in-stock' | 'low-stock' | 'out-of-stock';
+  // Shopify-specific fields
+  shopifyHandle?: string;
+  shopifyVariants?: Array<{
+    id: string;
+    title: string;
+    price: number;
+    available: boolean;
+    size: string;
+  }>;
 }
 
 export interface Drop {
