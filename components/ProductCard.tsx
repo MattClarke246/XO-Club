@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
-import { Heart, Maximize2, ShoppingBag } from 'lucide-react';
+import { Heart, Maximize2, ShoppingBag, Plus } from 'lucide-react';
 import { Product } from '../types';
-import ShopifyBuyButton from './ShopifyBuyButton';
 
 interface ProductCardProps {
   product: Product;
@@ -10,26 +9,17 @@ interface ProductCardProps {
   onAddToCart?: (product: Product, size: string) => void;
 }
 
-const SHOPIFY_STORE = 'jiir8p-qz.myshopify.com';
-
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCart }) => {
-  const handleQuickBuy = (e: React.MouseEvent) => {
+  const [justAdded, setJustAdded] = useState(false);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // Get first available variant
-    const firstVariant = product.shopifyVariants?.[0];
-    const variantId = firstVariant?.id;
-    
-    if (variantId) {
-      // Extract numeric ID from Shopify variant ID (remove "gid://shopify/ProductVariant/" if present)
-      const cleanVariantId = variantId.replace('gid://shopify/ProductVariant/', '');
-      window.location.href = `https://${SHOPIFY_STORE.replace('.myshopify.com', '')}.myshopify.com/cart/${cleanVariantId}:1`;
-    } else if (product.shopifyHandle) {
-      // Redirect to product page if no variant ID
-      window.location.href = `https://${SHOPIFY_STORE.replace('.myshopify.com', '')}.myshopify.com/products/${product.shopifyHandle}`;
-    } else {
-      // Fallback: open preview modal
-      onPreview(product);
+    if (onAddToCart && product.sizes.length > 0) {
+      // Add first available size to cart
+      onAddToCart(product, product.sizes[0]);
+      setJustAdded(true);
+      setTimeout(() => setJustAdded(false), 2000);
     }
   };
 
@@ -42,25 +32,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCa
           alt={`${product.name} - ${product.category}`}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:opacity-40"
         />
-        
-        {/* Badges */}
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          {product.isNew && (
-            <span className="bg-white text-black text-[9px] font-black px-3 py-1.5 rounded-full tracking-widest uppercase">Just Landed</span>
-          )}
-          {product.isLimited && (
-            <span className="bg-blue-600 text-white text-[9px] font-black px-3 py-1.5 rounded-full tracking-widest uppercase">Only {Math.floor(Math.random() * 40) + 10} Left</span>
-          )}
-        </div>
 
         {/* Quick Actions */}
         <div className="absolute top-4 right-4 flex flex-col gap-3 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
           <button 
-            className="p-3 bg-white text-black rounded-full hover:bg-blue-500 hover:text-white transition-all shadow-lg active:scale-90"
-            onClick={handleQuickBuy}
-            title="Buy Now"
+            className={`p-3 rounded-full transition-all shadow-lg active:scale-90 ${
+              justAdded 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-white text-black hover:bg-blue-500 hover:text-white'
+            }`}
+            onClick={handleAddToCart}
+            title="Add to Cart"
           >
-            <ShoppingBag size={16} strokeWidth={3} />
+            {justAdded ? (
+              <ShoppingBag size={16} strokeWidth={3} />
+            ) : (
+              <Plus size={16} strokeWidth={3} />
+            )}
           </button>
           <button 
             className="p-3 bg-black/50 glass text-white rounded-full hover:bg-white hover:text-black transition-colors"
