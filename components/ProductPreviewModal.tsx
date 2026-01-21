@@ -4,7 +4,7 @@ import { X, Heart, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Product } from '../types';
 import ShopifyBuyButton from './ShopifyBuyButton';
 
-const SHOPIFY_STORE = import.meta.env.VITE_SHOPIFY_STORE || 'xo-club-test.myshopify.com';
+const SHOPIFY_STORE = 'jiir8p-qz.myshopify.com';
 
 interface ProductPreviewModalProps {
   product: Product | null;

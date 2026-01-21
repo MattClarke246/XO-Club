@@ -10,7 +10,7 @@ interface ProductCardProps {
   onAddToCart?: (product: Product, size: string) => void;
 }
 
-const SHOPIFY_STORE = import.meta.env.VITE_SHOPIFY_STORE || 'xo-club-test.myshopify.com';
+const SHOPIFY_STORE = 'jiir8p-qz.myshopify.com';
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCart }) => {
   const handleQuickBuy = (e: React.MouseEvent) => {

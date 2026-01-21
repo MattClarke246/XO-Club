@@ -3,7 +3,7 @@ import React from 'react';
 import { X, ShoppingBag, ArrowRight } from 'lucide-react';
 import { CartItem } from '../types';
 
-const SHOPIFY_STORE = import.meta.env.VITE_SHOPIFY_STORE || 'xo-club-test.myshopify.com';
+const SHOPIFY_STORE = 'jiir8p-qz.myshopify.com';
 
 interface CartSidebarProps {
   isOpen: boolean;
