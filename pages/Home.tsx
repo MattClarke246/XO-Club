@@ -27,7 +27,16 @@ const MOCK_PRODUCTS: Product[] = [
     ],
     description: 'Iconic high-top silhouette with premium leather construction. Classic colorway featuring the legendary Air Jordan design. High-top design for maximum support and timeless style. The ultimate sneaker for collectors and streetwear enthusiasts.', 
     sizes: ['8', '9', '10', '11', '12'],
-    isNew: true 
+    isNew: true,
+    shopifyProductId: '8351909675178',
+    shopifyHandle: 'retro-jordan-1-high',
+    shopifyVariants: [
+      { id: '47906037072042', title: '8', price: 25, available: true, size: '8' },
+      { id: '47906037104810', title: '9', price: 25, available: true, size: '9' },
+      { id: '47906037137578', title: '10', price: 25, available: true, size: '10' },
+      { id: '47906037170346', title: '11', price: 25, available: true, size: '11' },
+      { id: '47906037203114', title: '12', price: 25, available: true, size: '12' },
+    ]
   },
   { 
     id: '2', 
@@ -42,7 +51,15 @@ const MOCK_PRODUCTS: Product[] = [
     ],
     description: 'Premium heavyweight fleece hoodie featuring the iconic box logo. French terry cotton construction with brushed interior for ultimate comfort. Ribbed cuffs and hem, adjustable drawstring hood, and roomy front pocket. The streetwear essential that never goes out of style.', 
     sizes: ['M', 'L', 'XL', 'XXL'],
-    isLimited: true 
+    isLimited: true,
+    shopifyProductId: '8351919276202',
+    shopifyHandle: 'supreme-box-logo-hoodie',
+    shopifyVariants: [
+      { id: '47906048278698', title: 'M', price: 25, available: true, size: 'M' },
+      { id: '47906048311466', title: 'L', price: 25, available: true, size: 'L' },
+      { id: '47906048344234', title: 'XL', price: 25, available: true, size: 'XL' },
+      { id: '47906048377002', title: '2XL', price: 25, available: true, size: 'XXL' },
+    ]
   },
   { 
     id: '3', 
@@ -57,7 +74,12 @@ const MOCK_PRODUCTS: Product[] = [
     ],
     description: 'Cactus Jack branded beanie with embroidered logo. Soft acrylic knit construction with stretch fit. One size fits most. Folded cuff design for versatile styling. The perfect accessory to complete any streetwear fit. Limited edition collaboration piece.', 
     sizes: ['ONE SIZE'],
-    isNew: true
+    isNew: true,
+    shopifyProductId: '8351920455850',
+    shopifyHandle: 'travis-scott-cactus-jack-beanie',
+    shopifyVariants: [
+      { id: '47906123022506', title: 'ONE SIZE', price: 25, available: true, size: 'ONE SIZE' },
+    ]
   },
   { 
     id: '4', 
@@ -72,7 +94,12 @@ const MOCK_PRODUCTS: Product[] = [
     ],
     description: 'Durable 30L capacity backpack built for urban adventures. Water-resistant 600D recycled polyester construction. Padded laptop compartment, multiple organization pockets, and adjustable shoulder straps. Front bungee cord and top haul handle. The ultimate everyday carry for city life and beyond.', 
     sizes: ['ONE SIZE'],
-    isLimited: true 
+    isLimited: true,
+    shopifyProductId: '8351921242282',
+    shopifyHandle: 'northface-recon-backpack',
+    shopifyVariants: [
+      { id: '47906124103850', title: 'ONE SIZE', price: 25, available: true, size: 'ONE SIZE' },
+    ]
   },
 ];
 
