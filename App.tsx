@@ -7,7 +7,6 @@ import Footer from './components/Footer';
 import AnimatedBackground from './components/AnimatedBackground';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
-import Checkout from './pages/Checkout';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -86,14 +85,6 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
           <Route path="/shop" element={<Shop onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
-          <Route path="/checkout" element={
-            <Checkout 
-              cart={cart} 
-              onUpdateQuantity={updateQuantity} 
-              onRemove={removeFromCart} 
-              onClearCart={clearCart}
-            />
-          } />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route 
             path="/admin/dashboard" 

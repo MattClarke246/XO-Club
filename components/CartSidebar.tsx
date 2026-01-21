@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { X, ShoppingBag, ArrowRight } from 'lucide-react';
 import { CartItem } from '../types';
+
+const SHOPIFY_STORE = import.meta.env.VITE_SHOPIFY_STORE || 'xo-club-test.myshopify.com';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -20,6 +21,34 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   onUpdateQuantity
 }) => {
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  const handleShopifyCheckout = () => {
+    // Build cart items with Shopify variant IDs
+    const checkoutItems = cart
+      .map((item) => {
+        // Try to get variant ID from product
+        const variant = (item as any).shopifyVariants?.find((v: any) => 
+          v.size === item.selectedSize || v.title === item.selectedSize
+        );
+        
+        if (variant) {
+          const variantId = variant.id.replace('gid://shopify/ProductVariant/', '');
+          return `${variantId}:${item.quantity}`;
+        }
+        
+        return null;
+      })
+      .filter((item): item is string => item !== null);
+
+    if (checkoutItems.length === 0) {
+      alert('No valid Shopify products in cart. Please add products with Shopify variant IDs.');
+      return;
+    }
+
+    const storeName = SHOPIFY_STORE.replace('.myshopify.com', '');
+    const cartUrl = checkoutItems.join(',');
+    window.location.href = `https://${storeName}.myshopify.com/cart/${cartUrl}`;
+  };
 
   return (
     <>
@@ -111,13 +140,15 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                   </p>
                 </div>
                 
-                <Link 
-                  to="/checkout" 
-                  onClick={onClose}
+                <button
+                  onClick={() => {
+                    handleShopifyCheckout();
+                    onClose();
+                  }}
                   className="flex items-center justify-center w-full bg-white text-black py-6 rounded-2xl font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-500 text-center uppercase shadow-2xl hover:shadow-blue-500/20"
                 >
                   PROCEED TO CHECKOUT
-                </Link>
+                </button>
                 
                 <p className="text-[9px] text-center text-gray-700 font-black tracking-[0.3em] uppercase">
                   Secure 256-bit encrypted checkout

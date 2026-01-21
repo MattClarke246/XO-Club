@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { Heart, Maximize2, Plus, Check } from 'lucide-react';
+import { Heart, Maximize2, ShoppingBag } from 'lucide-react';
 import { Product } from '../types';
+import ShopifyBuyButton from './ShopifyBuyButton';
 
 interface ProductCardProps {
   product: Product;
@@ -9,15 +10,26 @@ interface ProductCardProps {
   onAddToCart?: (product: Product, size: string) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCart }) => {
-  const [justAdded, setJustAdded] = useState(false);
+const SHOPIFY_STORE = import.meta.env.VITE_SHOPIFY_STORE || 'xo-club-test.myshopify.com';
 
-  const handleQuickAdd = (e: React.MouseEvent) => {
+const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCart }) => {
+  const handleQuickBuy = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onAddToCart && product.sizes.length > 0) {
-      onAddToCart(product, product.sizes[0]);
-      setJustAdded(true);
-      setTimeout(() => setJustAdded(false), 2000);
+    
+    // Get first available variant
+    const firstVariant = product.shopifyVariants?.[0];
+    const variantId = firstVariant?.id;
+    
+    if (variantId) {
+      // Extract numeric ID from Shopify variant ID (remove "gid://shopify/ProductVariant/" if present)
+      const cleanVariantId = variantId.replace('gid://shopify/ProductVariant/', '');
+      window.location.href = `https://${SHOPIFY_STORE.replace('.myshopify.com', '')}.myshopify.com/cart/${cleanVariantId}:1`;
+    } else if (product.shopifyHandle) {
+      // Redirect to product page if no variant ID
+      window.location.href = `https://${SHOPIFY_STORE.replace('.myshopify.com', '')}.myshopify.com/products/${product.shopifyHandle}`;
+    } else {
+      // Fallback: open preview modal
+      onPreview(product);
     }
   };
 
@@ -44,11 +56,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCa
         {/* Quick Actions */}
         <div className="absolute top-4 right-4 flex flex-col gap-3 translate-x-4 opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all duration-300">
           <button 
-            className={`p-3 rounded-full transition-all shadow-lg active:scale-90 ${justAdded ? 'bg-blue-500 text-white' : 'bg-white text-black hover:bg-blue-500 hover:text-white'}`}
-            onClick={handleQuickAdd}
-            title="Instantly add to bag"
+            className="p-3 bg-white text-black rounded-full hover:bg-blue-500 hover:text-white transition-all shadow-lg active:scale-90"
+            onClick={handleQuickBuy}
+            title="Buy Now"
           >
-            {justAdded ? <Check size={16} strokeWidth={3} /> : <Plus size={16} strokeWidth={3} />}
+            <ShoppingBag size={16} strokeWidth={3} />
           </button>
           <button 
             className="p-3 bg-black/50 glass text-white rounded-full hover:bg-white hover:text-black transition-colors"
@@ -63,7 +75,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCa
 
         {/* Bottom Overlay Actions */}
         <div className="absolute bottom-0 left-0 w-full p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-          <button className="w-full bg-white text-black py-4 text-[10px] font-black tracking-[0.2em] rounded-xl hover:bg-blue-500 hover:text-white transition-all duration-300 uppercase shadow-2xl">
+          <button 
+            onClick={(e) => { e.stopPropagation(); onPreview(product); }}
+            className="w-full bg-white text-black py-4 text-[10px] font-black tracking-[0.2em] rounded-xl hover:bg-blue-500 hover:text-white transition-all duration-300 uppercase shadow-2xl"
+          >
             Quick View
           </button>
         </div>

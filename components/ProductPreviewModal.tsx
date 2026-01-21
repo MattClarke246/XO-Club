@@ -1,7 +1,10 @@
 
 import React, { useState } from 'react';
-import { X, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Heart, ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Product } from '../types';
+import ShopifyBuyButton from './ShopifyBuyButton';
+
+const SHOPIFY_STORE = import.meta.env.VITE_SHOPIFY_STORE || 'xo-club-test.myshopify.com';
 
 interface ProductPreviewModalProps {
   product: Product | null;
@@ -14,16 +17,38 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ product, onCl
 
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [activeImage, setActiveImage] = useState(0);
-  const [isAdded, setIsAdded] = useState(false);
 
-  const handleAddToCart = () => {
-    if (!selectedSize) return;
-    onAddToCart(product, selectedSize);
-    setIsAdded(true);
-    setTimeout(() => {
-      setIsAdded(false);
-      onClose();
-    }, 1500);
+  // Get variant ID for selected size
+  const getVariantId = (size: string): string | null => {
+    if (!product.shopifyVariants || product.shopifyVariants.length === 0) {
+      return null;
+    }
+    
+    const variant = product.shopifyVariants.find(v => 
+      v.size === size || v.title === size || v.title.includes(size)
+    );
+    
+    if (variant) {
+      // Extract numeric ID from Shopify variant ID
+      return variant.id.replace('gid://shopify/ProductVariant/', '');
+    }
+    
+    // Fallback to first variant
+    return product.shopifyVariants[0].id.replace('gid://shopify/ProductVariant/', '');
+  };
+
+  const handleBuyNow = () => {
+    const variantId = getVariantId(selectedSize || product.sizes[0]);
+    const storeName = SHOPIFY_STORE.replace('.myshopify.com', '');
+    
+    if (variantId) {
+      window.location.href = `https://${storeName}.myshopify.com/cart/${variantId}:1`;
+    } else if (product.shopifyHandle) {
+      window.location.href = `https://${storeName}.myshopify.com/products/${product.shopifyHandle}`;
+    } else {
+      // Fallback to store homepage
+      window.location.href = `https://${storeName}.myshopify.com`;
+    }
   };
 
   const nextImg = () => setActiveImage((prev) => (prev + 1) % product.gallery.length);
@@ -118,17 +143,16 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ product, onCl
 
               <div className="flex gap-4">
                 <button 
-                  onClick={handleAddToCart}
-                  disabled={!selectedSize || isAdded}
-                  className={`flex-1 py-5 rounded-full font-black text-xs tracking-[0.2em] transition-all duration-300 uppercase ${
-                    isAdded 
-                      ? 'bg-blue-500 text-white' 
-                      : !selectedSize 
-                        ? 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
-                        : 'bg-white text-black hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] active:scale-95'
+                  onClick={handleBuyNow}
+                  disabled={!selectedSize && product.sizes.length > 1}
+                  className={`flex-1 py-5 rounded-full font-black text-xs tracking-[0.2em] transition-all duration-300 uppercase flex items-center justify-center gap-2 ${
+                    !selectedSize && product.sizes.length > 1
+                      ? 'bg-white/5 text-white/20 cursor-not-allowed border border-white/5'
+                      : 'bg-white text-black hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(255,255,255,0.15)] active:scale-95 hover:bg-blue-500 hover:text-white'
                   }`}
                 >
-                  {isAdded ? 'GOT IT!' : selectedSize ? 'ADD TO BAG' : 'SELECT SIZE'}
+                  <ShoppingBag size={18} />
+                  {selectedSize || product.sizes.length === 1 ? 'BUY NOW' : 'SELECT SIZE'}
                 </button>
                 <button className="p-5 border border-white/10 rounded-full hover:bg-white/5 text-white transition-colors">
                   <Heart size={20} />
