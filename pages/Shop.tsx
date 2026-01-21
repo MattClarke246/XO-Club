@@ -8,6 +8,8 @@ import { Product } from '../types';
 interface ShopProps {
   onPreview: (product: Product) => void;
   onAddToCart: (product: Product, size: string) => void;
+  favorites: Product[];
+  onToggleFavorite: (product: Product) => void;
 }
 
 const MOCK_PRODUCTS: Product[] = [
@@ -101,7 +103,7 @@ const MOCK_PRODUCTS: Product[] = [
   },
 ];
 
-const Shop: React.FC<ShopProps> = ({ onPreview, onAddToCart }) => {
+const Shop: React.FC<ShopProps> = ({ onPreview, onAddToCart, favorites, onToggleFavorite }) => {
   return (
     <div className="min-h-screen pt-32 pb-32">
       <div className="container mx-auto px-6">
@@ -136,6 +138,8 @@ const Shop: React.FC<ShopProps> = ({ onPreview, onAddToCart }) => {
               product={product}
               onPreview={onPreview}
               onAddToCart={onAddToCart}
+              isFavorited={favorites.some(f => f.id === product.id)}
+              onToggleFavorite={onToggleFavorite}
             />
           ))}
         </div>

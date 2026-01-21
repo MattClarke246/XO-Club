@@ -7,9 +7,17 @@ interface ProductCardProps {
   product: Product;
   onPreview: (product: Product) => void;
   onAddToCart?: (product: Product, size: string) => void;
+  isFavorited?: boolean;
+  onToggleFavorite?: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCart }) => {
+const ProductCard: React.FC<ProductCardProps> = ({ 
+  product, 
+  onPreview, 
+  onAddToCart,
+  isFavorited = false,
+  onToggleFavorite
+}) => {
   const [justAdded, setJustAdded] = useState(false);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -20,6 +28,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCa
       onAddToCart(product, product.sizes[0]);
       setJustAdded(true);
       setTimeout(() => setJustAdded(false), 2000);
+    }
+  };
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onToggleFavorite) {
+      onToggleFavorite(product);
     }
   };
 
@@ -56,8 +71,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPreview, onAddToCa
           >
             <Maximize2 size={16} strokeWidth={2.5} />
           </button>
-          <button className="p-3 bg-black/50 glass text-white rounded-full hover:bg-white hover:text-black transition-colors">
-            <Heart size={16} strokeWidth={2.5} />
+          <button 
+            className={`p-3 rounded-full transition-colors ${
+              isFavorited 
+                ? 'bg-red-500 text-white hover:bg-red-600' 
+                : 'bg-black/50 glass text-white hover:bg-white hover:text-black'
+            }`}
+            onClick={handleToggleFavorite}
+            title={isFavorited ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart size={16} strokeWidth={2.5} fill={isFavorited ? 'currentColor' : 'none'} />
           </button>
         </div>
 

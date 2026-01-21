@@ -10,6 +10,8 @@ import { Product } from '../types';
 interface HomeProps {
   onPreview: (product: Product) => void;
   onAddToCart: (product: Product, size: string) => void;
+  favorites: Product[];
+  onToggleFavorite: (product: Product) => void;
 }
 
 const MOCK_PRODUCTS: Product[] = [
@@ -103,7 +105,7 @@ const MOCK_PRODUCTS: Product[] = [
   },
 ];
 
-const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
+const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart, favorites, onToggleFavorite }) => {
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
 
   return (
@@ -124,7 +126,14 @@ const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {MOCK_PRODUCTS.map((product) => (
-            <ProductCard key={product.id} product={product} onPreview={onPreview} onAddToCart={onAddToCart} />
+            <ProductCard 
+              key={product.id} 
+              product={product} 
+              onPreview={onPreview} 
+              onAddToCart={onAddToCart}
+              isFavorited={favorites.some(f => f.id === product.id)}
+              onToggleFavorite={onToggleFavorite}
+            />
           ))}
         </div>
       </section>

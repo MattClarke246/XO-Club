@@ -6,9 +6,10 @@ import { Search, ShoppingBag, Heart } from 'lucide-react';
 interface HeaderProps {
   onOpenCart: () => void;
   cartCount: number;
+  favoritesCount?: number;
 }
 
-const Header: React.FC<HeaderProps> = ({ onOpenCart, cartCount }) => {
+const Header: React.FC<HeaderProps> = ({ onOpenCart, cartCount, favoritesCount = 0 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -46,9 +47,17 @@ const Header: React.FC<HeaderProps> = ({ onOpenCart, cartCount }) => {
             <button className="text-white hover:text-blue-500 transition-all hover:scale-110">
               <Search size={18} strokeWidth={2.5} />
             </button>
-            <button className="text-white hover:text-blue-500 transition-all hover:scale-110 hidden md:block">
+            <Link 
+              to="/favorites"
+              className="text-white hover:text-blue-500 transition-all hover:scale-110 relative"
+            >
               <Heart size={18} strokeWidth={2.5} />
-            </button>
+              {favoritesCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-[8px] font-black w-4 h-4 flex items-center justify-center rounded-full animate-in zoom-in duration-300">
+                  {favoritesCount}
+                </span>
+              )}
+            </Link>
             <button className="text-white hover:text-blue-500 transition-all hover:scale-110" onClick={onOpenCart}>
               <div className="relative">
                 <ShoppingBag size={18} strokeWidth={2.5} />

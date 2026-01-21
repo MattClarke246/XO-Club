@@ -7,9 +7,15 @@ interface ProductPreviewModalProps {
   product: Product | null;
   onClose: () => void;
   onAddToCart: (product: Product, size: string) => void;
+  isFavorited?: boolean;
+  onToggleFavorite?: (product: Product) => void;
 }
 
-const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ product, onClose, onAddToCart }) => {
+const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ 
+  product, onClose, onAddToCart,
+  isFavorited = false,
+  onToggleFavorite
+}) => {
   if (!product) return null;
 
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -25,6 +31,12 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ product, onCl
     setTimeout(() => {
       setIsAdded(false);
     }, 2000);
+  };
+
+  const handleToggleFavorite = () => {
+    if (onToggleFavorite) {
+      onToggleFavorite(product);
+    }
   };
 
   const nextImg = () => setActiveImage((prev) => (prev + 1) % product.gallery.length);
@@ -141,8 +153,16 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({ product, onCl
                     </>
                   )}
                 </button>
-                <button className="p-5 border border-white/10 rounded-full hover:bg-white/5 text-white transition-colors">
-                  <Heart size={20} />
+                <button 
+                  className={`p-5 rounded-full transition-colors ${
+                    isFavorited 
+                      ? 'bg-red-500 text-white hover:bg-red-600 border border-red-500' 
+                      : 'border border-white/10 hover:bg-white/5 text-white'
+                  }`}
+                  onClick={handleToggleFavorite}
+                  title={isFavorited ? "Remove from favorites" : "Add to favorites"}
+                >
+                  <Heart size={20} fill={isFavorited ? 'currentColor' : 'none'} />
                 </button>
               </div>
             </div>

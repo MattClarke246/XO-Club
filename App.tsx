@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import AnimatedBackground from './components/AnimatedBackground';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
+import Favorites from './pages/Favorites';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -30,6 +31,10 @@ const AppContent: React.FC = () => {
     const saved = localStorage.getItem('xo-club-cart');
     return saved ? JSON.parse(saved) : [];
   });
+  const [favorites, setFavorites] = useState<Product[]>(() => {
+    const saved = localStorage.getItem('xo-club-favorites');
+    return saved ? JSON.parse(saved) : [];
+  });
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [showAi, setShowAi] = useState(true);
   const [isAiMinimized, setIsAiMinimized] = useState(false);
@@ -37,6 +42,10 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('xo-club-cart', JSON.stringify(cart));
   }, [cart]);
+
+  useEffect(() => {
+    localStorage.setItem('xo-club-favorites', JSON.stringify(favorites));
+  }, [favorites]);
 
   const addToCart = (product: Product, size: string) => {
     setCart(prev => {
@@ -68,6 +77,17 @@ const AppContent: React.FC = () => {
 
   const clearCart = () => setCart([]);
 
+  const toggleFavorite = (product: Product) => {
+    setFavorites(prev => {
+      const isFavorited = prev.some(item => item.id === product.id);
+      if (isFavorited) {
+        return prev.filter(item => item.id !== product.id);
+      } else {
+        return [...prev, product];
+      }
+    });
+  };
+
   // Logic: AI is only visible if master toggle is on AND cart is NOT open
   const shouldRenderAiWidget = showAi && !isCartOpen && !isAiMinimized;
   const shouldRenderAiTrigger = showAi && !isCartOpen && isAiMinimized;
@@ -78,13 +98,36 @@ const AppContent: React.FC = () => {
       
       <Header 
         onOpenCart={() => setIsCartOpen(true)} 
-        cartCount={cart.reduce((s, i) => s + i.quantity, 0)} 
+        cartCount={cart.reduce((s, i) => s + i.quantity, 0)}
+        favoritesCount={favorites.length}
       />
       
       <main>
         <Routes>
-          <Route path="/" element={<Home onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
-          <Route path="/shop" element={<Shop onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
+          <Route path="/" element={
+            <Home 
+              onPreview={setSelectedProduct} 
+              onAddToCart={addToCart}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+            />
+          } />
+          <Route path="/shop" element={
+            <Shop 
+              onPreview={setSelectedProduct} 
+              onAddToCart={addToCart}
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+            />
+          } />
+          <Route path="/favorites" element={
+            <Favorites 
+              favorites={favorites}
+              onToggleFavorite={toggleFavorite}
+              onPreview={setSelectedProduct}
+              onAddToCart={addToCart}
+            />
+          } />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route 
             path="/admin/dashboard" 
@@ -104,6 +147,8 @@ const AppContent: React.FC = () => {
         product={selectedProduct} 
         onClose={() => setSelectedProduct(null)} 
         onAddToCart={addToCart}
+        isFavorited={selectedProduct ? favorites.some(f => f.id === selectedProduct.id) : false}
+        onToggleFavorite={toggleFavorite}
       />
       
       <CartSidebar 
