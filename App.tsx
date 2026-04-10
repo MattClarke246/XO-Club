@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { MessageSquare, Minimize2 } from 'lucide-react';
+import { Toaster } from 'sonner';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AnimatedBackground from './components/AnimatedBackground';
@@ -46,6 +47,17 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('xo-club-favorites', JSON.stringify(favorites));
   }, [favorites]);
+
+  useEffect(() => {
+    const cursor = document.getElementById('custom-cursor');
+    const onMouseMove = (e: MouseEvent) => {
+      if (cursor) {
+        cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      }
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    return () => document.removeEventListener('mousemove', onMouseMove);
+  }, []);
 
   const addToCart = (product: Product, size: string) => {
     setCart(prev => {
@@ -189,15 +201,6 @@ const AppContent: React.FC = () => {
       
       {/* Custom Global Cursor */}
       <div className="fixed top-0 left-0 w-8 h-8 border-2 border-white/20 rounded-full pointer-events-none z-[200] transition-transform duration-75 ease-out translate-x-[-50%] translate-y-[-50%] mix-blend-difference hidden lg:block" id="custom-cursor" />
-
-      <script dangerouslySetInnerHTML={{ __html: `
-        document.addEventListener('mousemove', (e) => {
-          const cursor = document.getElementById('custom-cursor');
-          if (cursor) {
-            cursor.style.transform = \`translate3d(\${e.clientX}px, \${e.clientY}px, 0)\`;
-          }
-        });
-      `}} />
     </div>
   );
 };
@@ -205,6 +208,7 @@ const AppContent: React.FC = () => {
 const App: React.FC = () => {
   return (
     <Router>
+      <Toaster theme="dark" position="bottom-right" richColors toastOptions={{ style: { background: '#111', border: '1px solid rgba(255,255,255,0.1)' } }} />
       <AppContent />
     </Router>
   );

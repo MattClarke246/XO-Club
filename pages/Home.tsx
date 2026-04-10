@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 import Hero from '../components/Hero';
 import ProductCard from '../components/ProductCard';
 import SocialProof from '../components/SocialProof';
@@ -167,16 +168,30 @@ const Home: React.FC<HomeProps> = ({ onPreview, onAddToCart, favorites, onToggle
           <p className="text-gray-500 mb-14 max-w-xl mx-auto font-bold tracking-widest uppercase text-sm">
             EARLY ACCESS + VIP DROPS. JOIN THE CLUB.
           </p>
-          <div className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              const target = e.target as typeof e.target & {
+                email: { value: string };
+              };
+              if (target.email.value) {
+                toast.success('Welcome to the club.', { description: 'Early access unlocked.' });
+                target.email.value = '';
+              }
+            }}
+            className="flex flex-col md:flex-row gap-4 max-w-2xl mx-auto"
+          >
             <input 
+              name="email"
               type="email" 
+              required
               placeholder="YOUR EMAIL" 
               className="flex-1 bg-white/5 border border-white/10 rounded-full px-10 py-6 text-white focus:outline-none focus:border-blue-500 transition-all text-xs tracking-widest font-black uppercase"
             />
-            <button className="bg-white text-black px-12 py-6 rounded-full font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-300 uppercase shadow-2xl">
+            <button type="submit" className="bg-white text-black px-12 py-6 rounded-full font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-300 uppercase shadow-2xl">
               JOIN
             </button>
-          </div>
+          </form>
         </div>
       </section>
 

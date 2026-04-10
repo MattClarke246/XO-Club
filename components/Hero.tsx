@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Hero: React.FC = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -50,11 +51,11 @@ const Hero: React.FC = () => {
           </p>
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-            <button className="group relative bg-white text-black px-12 py-5 font-black text-xs tracking-[0.2em] rounded-full overflow-hidden transition-all hover:pr-14 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 active:scale-95">
+            <Link to="/shop" className="group relative bg-white text-black px-12 py-5 font-black text-xs tracking-[0.2em] rounded-full overflow-hidden transition-all hover:pr-14 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 active:scale-95 text-center">
               <span className="relative z-10">GET IT NOW</span>
               <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300" size={18} />
-            </button>
-            <button className="px-12 py-5 border border-white/20 text-white font-bold text-xs tracking-[0.2em] rounded-full hover:bg-white/5 transition-all uppercase active:scale-95">
+            </Link>
+            <button onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })} className="px-12 py-5 border border-white/20 text-white font-bold text-xs tracking-[0.2em] rounded-full hover:bg-white/5 transition-all uppercase active:scale-95">
               STYLE IT
             </button>
           </div>

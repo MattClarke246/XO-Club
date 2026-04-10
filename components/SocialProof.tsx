@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const SocialProof: React.FC = () => {
   const socialImages = [
@@ -26,7 +27,7 @@ const SocialProof: React.FC = () => {
               <div className="w-full h-full relative overflow-hidden rounded-xl grayscale hover:grayscale-0 transition-all duration-700">
                 <img src={img.url} alt="XO Club Community Member" className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-1000" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                   <button className="text-[10px] font-black tracking-widest text-white border border-white px-4 py-2 rounded-full">SHOP FIT</button>
+                   <Link to="/shop" className="text-[10px] font-black tracking-widest text-white border border-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors">SHOP FIT</Link>
                 </div>
               </div>
             </div>

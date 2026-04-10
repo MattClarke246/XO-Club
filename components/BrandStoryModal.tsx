@@ -46,66 +46,37 @@ const BrandStoryModal: React.FC<BrandStoryModalProps> = ({ isOpen, onClose }) =>
           {/* Story Content */}
           <div className="p-8 md:p-12 space-y-8">
             <div className="space-y-6 text-gray-300 leading-relaxed">
-              <p className="text-lg md:text-xl font-medium">
-                Born from the streets, forged in authenticity. XO Club emerged from a simple truth: 
-                <span className="text-white font-bold"> streetwear shouldn't be disposable</span>. 
-                It should be built to last, designed to inspire, and crafted for those who refuse to follow.
+              <p className="text-lg md:text-xl font-medium leading-relaxed">
+                <span className="text-white font-bold">Built from difference, not being comfortable with where you are.</span> This brand lives at the intersection of fashion, sport, and urban culture pushed beyond the limits of this world. Inspired by extraterrestrial energy, we design for those who move different, think different, and refuse to blend in.
               </p>
 
               <div className="border-l-4 border-blue-500 pl-6 space-y-4">
-                <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">THE BEGINNING</h3>
-                <p className="text-base md:text-lg">
-                  It started in 2018, in a small studio apartment where two friends—one a designer, 
-                  the other a street photographer—decided the industry needed a reset. While others 
-                  chased trends, we built a philosophy: <span className="text-white font-semibold">quality over everything</span>. 
-                  Every stitch, every fabric choice, every design decision was made with one question: 
-                  "Will this survive the hype?"
+                <p className="text-base md:text-lg text-white font-semibold">
+                  In a world where everything is accessible, XO Club was created for what isn't.
                 </p>
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">THE REBELLION</h3>
                 <p className="text-base md:text-lg">
-                  We watched fast fashion flood the streets. We saw quality sacrificed for quantity. 
-                  We witnessed culture commodified. And we said <span className="text-white font-semibold">no</span>.
-                </p>
-                <p className="text-base md:text-lg">
-                  XO Club became our answer. Not just clothing—a statement. A commitment to pieces 
-                  that don't fade when the season changes. Garments that tell a story. Designs that 
-                  respect the culture they're born from.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">THE STANDARD</h3>
-                <p className="text-base md:text-lg">
-                  Every drop is limited. Every piece is intentional. We don't flood the market—we 
-                  curate. We don't follow—we <span className="text-white font-semibold">lead</span>.
-                </p>
-                <p className="text-base md:text-lg">
-                  Our 300GSM organic cotton tees? They're not just shirts—they're canvases. Our 
-                  tech-wear pieces? Not just fashion—function meets form. Every design is tested, 
-                  refined, and released only when it meets our uncompromising standard.
+                  Born from the idea that <span className="text-white font-semibold">connection is currency and presence is power</span>. XO Club isn't just a brand—it's an experience reserved for those who move different.
                 </p>
               </div>
 
               <div className="bg-white/5 p-8 rounded-2xl border border-white/10 space-y-4">
-                <h3 className="text-xl md:text-2xl font-black text-blue-500 uppercase tracking-widest">THE MISSION</h3>
-                <p className="text-lg md:text-xl font-medium text-white">
-                  To create streetwear that survives the hype. To build a community that values 
-                  quality over quantity. To prove that <span className="text-blue-500">elite pieces need no filler</span>.
+                <h3 className="text-xl md:text-2xl font-black text-blue-500 uppercase tracking-widest">THE XO CODE</h3>
+                <p className="text-lg md:text-xl font-medium text-white mb-4">
+                  The XO represents more than a symbol, it's a code:
                 </p>
+                <div className="space-y-3 text-2xl font-black tracking-widest">
+                  <div className="text-white"><span className="text-blue-500">X</span> = EXCLUSIVITY</div>
+                  <div className="text-white"><span className="text-blue-500">O</span> = ORBIT</div>
+                </div>
               </div>
 
-              <div className="space-y-4 pt-4">
-                <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight">JOIN THE MOVEMENT</h3>
-                <p className="text-base md:text-lg">
-                  This isn't just a brand. It's a <span className="text-white font-semibold">movement</span>. A community of 
-                  rebels, creators, and visionaries who refuse to settle. Who understand that true 
-                  style isn't about what's trending—it's about what lasts.
-                </p>
-                <p className="text-base md:text-lg font-medium text-white">
-                  Welcome to XO Club. Welcome to the next generation of streetwear.
+              <div className="space-y-4 pt-4 border-t border-white/5">
+                <p className="text-xl md:text-3xl font-black text-white tracking-widest uppercase">
+                  A circle of influence...<br/>
+                  <span className="text-blue-500 text-2xl md:text-4xl block mt-4">You either belong or you don't.</span>
                 </p>
               </div>
             </div>

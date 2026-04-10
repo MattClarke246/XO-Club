@@ -1,0 +1,80 @@
+# <!-- Powered by BMAD™ Core -->
+workflow:
+  id: shopify-integration
+  name: Shopify UI/Frontend Integration
+  description: >-
+    Agent workflow for building Shopify commerce features on the frontend.
+    Enforces a strict set of checks and balances prior to applying AI prompts for integration.
+  type: e-commerce-integration
+  project_types:
+    - react-storefront
+    - shopify-buy-button
+
+  sequence:
+    - agent: analyst
+      creates: integration-brief.md
+      notes: "Defines what eCommerce feature we are building (e.g. custom cart, product variants selector)."
+
+    - agent: architect
+      creates: shopify-integration-spec.md
+      requires: integration-brief.md
+      notes: "Maps the requested feature to Shopify capabilities (Storefront API, Buy Button Javascript, Webhooks)."
+
+    - agent: pm
+      action: run_pre_prompt_checks
+      validates: shopify-integration-spec.md
+      uses: shopify-prompt-checklist
+      notes: "Crucial step: Evaluates the approach against Shopify rate limits, frontend security, and existing Storefront API patterns. Must pass before coding prompt is created."
+
+    - agent: ux-expert
+      creates: shopify-ui-prompt.md
+      requires: shopify-prompt-checklist passed
+      notes: "Generates the exact prompt implementation details. Ensures smooth UI/UX for loading states and cart updates."
+
+    - agent: po
+      validates: all_artifacts
+      uses: po-master-checklist
+      notes: "Validates all documents for consistency and completeness."
+
+    - agent: po
+      action: shard_documents
+      creates: sharded_docs
+      notes: "Prepares integration stories for the developer agent."
+
+    - agent: dev
+      action: implement_story
+      creates: implementation_files
+      requires: shopify-ui-prompt.md
+      notes: "Developer receives the checked and balanced prompt to implement the Shopify feature."
+
+    - agent: qa
+      action: review_integration
+      updates: implementation_files
+      notes: "Tests real API interactions, cart persistence, and UI responsiveness."
+
+  flow_diagram: |
+    ```mermaid
+    graph TD
+        A[Start: Shopify Feature] --> B[analyst: integration-brief.md]
+        B --> C[architect: shopify-integration-spec.md]
+        C --> D{Checklist Passed?}
+        D -->|No| C
+        D -->|Yes| E[ux-expert: shopify-ui-prompt.md]
+        E --> F[po: shard docs and validate]
+        F --> G[dev: implement shopify feature]
+        G --> H[qa: review storefront integration]
+        H --> I[Complete]
+        
+        style C fill:#FFE4B5
+        style D fill:#FFA07A
+        style E fill:#E6E6FA
+        style G fill:#ADD8E6
+        style H fill:#F0E68C
+    ```
+
+  decision_guidance:
+    when_to_use:
+      - Integrating new products via Shopify Buy Button
+      - Building custom checkout experiences
+      - Syncing storefront themes with React frontend
+      - Setting up Shopify Webhooks handling

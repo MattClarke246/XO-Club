@@ -1,8 +1,14 @@
 
 import React from 'react';
 import { Instagram, Twitter, Youtube, Github } from 'lucide-react';
+import { toast } from 'sonner';
 
 const Footer: React.FC = () => {
+  const handleDeadLink = (e: React.MouseEvent, page: string) => {
+    e.preventDefault();
+    toast.info(`${page} is coming soon.`, { description: 'Check back later.' });
+  };
+
   return (
     <footer className="bg-[#050505] pt-24 pb-12 border-t border-white/5">
       <div className="container mx-auto px-6">
@@ -14,29 +20,29 @@ const Footer: React.FC = () => {
               Designing the future of urban luxury. Inspired by culture, driven by creativity.
             </p>
             <div className="flex items-center space-x-6 text-gray-500">
-              <Instagram size={20} className="hover:text-white transition-colors cursor-pointer" />
-              <Twitter size={20} className="hover:text-white transition-colors cursor-pointer" />
-              <Youtube size={20} className="hover:text-white transition-colors cursor-pointer" />
-              <Github size={20} className="hover:text-white transition-colors cursor-pointer" />
+              <a href="https://instagram.com" target="_blank" rel="noreferrer"><Instagram size={20} className="hover:text-white transition-colors cursor-pointer" /></a>
+              <a href="https://twitter.com" target="_blank" rel="noreferrer"><Twitter size={20} className="hover:text-white transition-colors cursor-pointer" /></a>
+              <a href="https://youtube.com" target="_blank" rel="noreferrer"><Youtube size={20} className="hover:text-white transition-colors cursor-pointer" /></a>
+              <a href="https://github.com" target="_blank" rel="noreferrer"><Github size={20} className="hover:text-white transition-colors cursor-pointer" /></a>
             </div>
           </div>
 
           <div>
             <h4 className="text-[10px] font-black tracking-widest text-white mb-8 uppercase">HELP</h4>
             <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-white transition-colors">Track Order</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Shipping</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Returns</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
+              <li><a href="#" onClick={(e) => handleDeadLink(e, 'Track Order')} className="hover:text-white transition-colors">Track Order</a></li>
+              <li><a href="#" onClick={(e) => handleDeadLink(e, 'Shipping')} className="hover:text-white transition-colors">Shipping</a></li>
+              <li><a href="#" onClick={(e) => handleDeadLink(e, 'Returns')} className="hover:text-white transition-colors">Returns</a></li>
+              <li><a href="#" onClick={(e) => handleDeadLink(e, 'Contact Us')} className="hover:text-white transition-colors">Contact Us</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-[10px] font-black tracking-widest text-white mb-8 uppercase">LEGAL</h4>
             <ul className="space-y-4 text-sm text-gray-500">
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Cookie Policy</a></li>
+              <li><a href="#" onClick={(e) => handleDeadLink(e, 'Privacy Policy')} className="hover:text-white transition-colors">Privacy Policy</a></li>
+              <li><a href="#" onClick={(e) => handleDeadLink(e, 'Terms of Service')} className="hover:text-white transition-colors">Terms of Service</a></li>
+              <li><a href="#" onClick={(e) => handleDeadLink(e, 'Cookie Policy')} className="hover:text-white transition-colors">Cookie Policy</a></li>
             </ul>
           </div>
         </div>

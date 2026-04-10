@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Heart, ChevronLeft, ChevronRight, ShoppingBag, Plus, Check } from 'lucide-react';
+import { toast } from 'sonner';
 import { Product } from '../types';
 
 interface ProductPreviewModalProps {
@@ -16,11 +17,18 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
   isFavorited = false,
   onToggleFavorite
 }) => {
-  if (!product) return null;
-
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [activeImage, setActiveImage] = useState(0);
   const [isAdded, setIsAdded] = useState(false);
+
+  useEffect(() => {
+    if (product) {
+      setSelectedSize('');
+      setActiveImage(0);
+    }
+  }, [product]);
+
+  if (!product) return null;
 
   const handleAddToCart = () => {
     if (!selectedSize && product.sizes.length > 1) return;
@@ -110,7 +118,7 @@ const ProductPreviewModal: React.FC<ProductPreviewModalProps> = ({
               <div>
                 <div className="flex justify-between items-end mb-4">
                   <span className="text-[10px] font-black tracking-widest text-gray-500 uppercase">Select Size</span>
-                  <button className="text-[9px] font-black text-white/40 border-b border-white/10 hover:text-white transition-colors uppercase">Size Guide</button>
+                  <button onClick={() => toast.info('Size Guide', { description: 'Sizing chart is being updated.' })} className="text-[9px] font-black text-white/40 border-b border-white/10 hover:text-white transition-colors uppercase">Size Guide</button>
                 </div>
                 <div className="grid grid-cols-4 gap-3">
                   {product.sizes.map((size) => (

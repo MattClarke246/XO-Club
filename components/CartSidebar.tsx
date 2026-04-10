@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { X, ShoppingBag, ArrowRight } from 'lucide-react';
+import { toast } from 'sonner';
 import { CartItem } from '../types';
 
 const SHOPIFY_STORE = 'jiir8p-qz.myshopify.com';
@@ -41,7 +42,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
       .filter((item): item is string => item !== null);
 
     if (checkoutItems.length === 0) {
-      alert('No valid Shopify products in cart. Please add products with Shopify variant IDs.');
+      toast.error('No valid products in cart', { description: 'These items are missing active Shopify connections.' });
       return;
     }
 

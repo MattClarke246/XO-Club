@@ -27,3 +27,4 @@ dist-ssr
 api/
 lib/email.ts
 vercel.json
+.vercel
