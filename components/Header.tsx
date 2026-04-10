@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingBag, Heart } from 'lucide-react';
-import logoUrl from '../assets/LOGO/XO_Club_Logo.JPEG';
+import logoUrl from '../Assets/LOGO/XO_Club_Logo.JPEG';
 
 interface HeaderProps {
   onOpenCart: () => void;
