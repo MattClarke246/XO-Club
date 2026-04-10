@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ShoppingBag, Heart } from 'lucide-react';
+import logoUrl from '../assets/LOGO/XO_Club_Logo.JPEG';
 
 interface HeaderProps {
   onOpenCart: () => void;
@@ -36,9 +37,9 @@ const Header: React.FC<HeaderProps> = ({ onOpenCart, cartCount, favoritesCount =
           <div className="flex justify-center">
             <Link 
               to="/" 
-              className="text-2xl font-black tracking-tighter text-white hover:scale-105 transition-transform duration-300 flex items-center gap-1"
+              className="hover:scale-105 transition-transform duration-300 flex items-center justify-center"
             >
-              XO CLUB<span className="text-blue-500 text-3xl leading-none">.</span>
+              <img src={logoUrl} alt="XO CLUB" className="h-10 md:h-12 lg:h-14 object-contain" />
             </Link>
           </div>
 
