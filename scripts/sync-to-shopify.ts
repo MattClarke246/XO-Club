@@ -16,8 +16,8 @@ import {
   createShopifyProduct,
   updateShopifyProduct,
   findProductByTitle,
-  ProductDrop,
 } from '../lib/shopify-admin';
+import type { ProductDrop } from '../types';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });

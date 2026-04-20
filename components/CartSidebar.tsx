@@ -4,7 +4,7 @@ import { X, ShoppingBag, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { CartItem } from '../types';
 
-const SHOPIFY_STORE = 'jiir8p-qz.myshopify.com';
+const shopifyStoreDomain = import.meta.env.VITE_SHOPIFY_STORE?.trim() || '';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -24,6 +24,13 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
   const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleShopifyCheckout = () => {
+    if (!shopifyStoreDomain) {
+      toast.error('Checkout unavailable', {
+        description: 'Set VITE_SHOPIFY_STORE in your environment (e.g. on Vercel) to your-store.myshopify.com',
+      });
+      return;
+    }
+
     // Build cart items with Shopify variant IDs
     const checkoutItems = cart
       .map((item) => {
@@ -46,7 +53,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
       return;
     }
 
-    const storeName = SHOPIFY_STORE.replace('.myshopify.com', '');
+    const storeName = shopifyStoreDomain.replace('.myshopify.com', '').replace(/^https?:\/\//, '');
     const cartUrl = checkoutItems.join(',');
     window.location.href = `https://${storeName}.myshopify.com/cart/${cartUrl}`;
   };

@@ -9,21 +9,7 @@ const SHOPIFY_ADMIN_API_VERSION = process.env.SHOPIFY_ADMIN_API_VERSION || '2024
 // Note: Admin API should be called from server-side (Edge Function or API route)
 // For sync script, we use Node.js process.env
 
-export interface ProductDrop {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  images: string[];
-  variants: Array<{
-    size: string;
-    price?: number;
-  }>;
-  category: string;
-  isNew?: boolean;
-  isLimited?: boolean;
-  tags?: string[];
-}
+import type { ProductDrop } from '../types';
 
 // Create product in Shopify via Admin API
 export async function createShopifyProduct(product: ProductDrop): Promise<string | null> {

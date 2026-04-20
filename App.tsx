@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { MessageSquare, Minimize2 } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -9,36 +8,27 @@ import AnimatedBackground from './components/AnimatedBackground';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import Favorites from './pages/Favorites';
-import AdminLogin from './pages/AdminLogin';
-import AdminDashboard from './pages/AdminDashboard';
-import ProtectedRoute from './components/ProtectedRoute';
 import ProductPreviewModal from './components/ProductPreviewModal';
 import CartSidebar from './components/CartSidebar';
 import { Product, CartItem } from './types';
 
-// Define type for ElevenLabs custom element
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      'elevenlabs-convai': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & { 'agent-id'?: string }, HTMLElement>;
-    }
+function readStoredJson<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
   }
 }
 
 const AppContent: React.FC = () => {
-  const location = useLocation();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [cart, setCart] = useState<CartItem[]>(() => {
-    const saved = localStorage.getItem('xo-club-cart');
-    return saved ? JSON.parse(saved) : [];
-  });
-  const [favorites, setFavorites] = useState<Product[]>(() => {
-    const saved = localStorage.getItem('xo-club-favorites');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [cart, setCart] = useState<CartItem[]>(() => readStoredJson<CartItem[]>('xo-club-cart', []));
+  const [favorites, setFavorites] = useState<Product[]>(() =>
+    readStoredJson<Product[]>('xo-club-favorites', []),
+  );
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [showAi, setShowAi] = useState(true);
-  const [isAiMinimized, setIsAiMinimized] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('xo-club-cart', JSON.stringify(cart));
@@ -100,10 +90,6 @@ const AppContent: React.FC = () => {
     });
   };
 
-  // Logic: AI is only visible if master toggle is on AND cart is NOT open
-  const shouldRenderAiWidget = showAi && !isCartOpen && !isAiMinimized;
-  const shouldRenderAiTrigger = showAi && !isCartOpen && isAiMinimized;
-
   return (
     <div className="min-h-screen bg-black text-white selection:bg-blue-500 selection:text-white overflow-x-hidden">
       <AnimatedBackground />
@@ -140,15 +126,6 @@ const AppContent: React.FC = () => {
               onAddToCart={addToCart}
             />
           } />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route 
-            path="/admin/dashboard" 
-            element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } 
-          />
           <Route path="*" element={<Home onPreview={setSelectedProduct} onAddToCart={addToCart} />} />
         </Routes>
       </main>
@@ -171,34 +148,6 @@ const AppContent: React.FC = () => {
         onUpdateQuantity={updateQuantity}
       />
 
-      {/* ElevenLabs Conversational AI Widget */}
-      {shouldRenderAiWidget && (
-        <>
-          <elevenlabs-convai agent-id="agent_7101kedz95tbfakaqapjdsyk7jhr" />
-          {/* Custom Minimize Button to override/augment widget UI */}
-          <button 
-            onClick={() => setIsAiMinimized(true)}
-            className="fixed bottom-24 right-6 z-[100] bg-white/10 hover:bg-white/20 p-2 rounded-full border border-white/10 backdrop-blur-md transition-all md:bottom-28 lg:bottom-32"
-            title="Minimize AI Assistant"
-            aria-label="Minimize AI Assistant"
-          >
-            <Minimize2 size={14} className="text-white/60" />
-          </button>
-        </>
-      )}
-
-      {/* Minimized AI Bubble */}
-      {shouldRenderAiTrigger && (
-        <button 
-          onClick={() => setIsAiMinimized(false)}
-          className="fixed bottom-8 right-8 z-[100] w-14 h-14 bg-blue-500 text-white rounded-full shadow-[0_10px_40px_rgba(59,130,246,0.5)] flex items-center justify-center hover:scale-110 active:scale-95 transition-all animate-in fade-in slide-in-from-bottom-4 duration-500"
-          aria-label="Open AI Assistant"
-        >
-          <MessageSquare size={24} strokeWidth={2.5} />
-          <span className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full animate-ping opacity-75" aria-hidden="true"></span>
-        </button>
-      )}
-      
       {/* Custom Global Cursor */}
       <div className="fixed top-0 left-0 w-8 h-8 border-2 border-white/20 rounded-full pointer-events-none z-[200] transition-transform duration-75 ease-out translate-x-[-50%] translate-y-[-50%] mix-blend-difference hidden lg:block" id="custom-cursor" />
     </div>

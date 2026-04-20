@@ -24,6 +24,23 @@ export interface Product {
   }>;
 }
 
+/** Product definition for `products/drops.ts` and Shopify Admin sync (no secrets). */
+export interface ProductDrop {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  images: string[];
+  variants: Array<{
+    size: string;
+    price?: number;
+  }>;
+  category: string;
+  isNew?: boolean;
+  isLimited?: boolean;
+  tags?: string[];
+}
+
 export interface Drop {
   id: string;
   title: string;

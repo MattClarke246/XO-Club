@@ -1,4 +1,2 @@
-# Ignore API directory with conflicting email files
+# Optional: exclude local-only paths from Vercel uploads
 api/
-**/api/send-email.*
-lib/email.ts

@@ -13,9 +13,11 @@ if (SHOPIFY_STORE && SHOPIFY_STOREFRONT_TOKEN) {
     apiVersion: '2024-01',
     publicAccessToken: SHOPIFY_STOREFRONT_TOKEN,
   });
-  console.log('✅ Shopify Storefront API client initialized');
-} else {
-  console.warn('⚠️ Shopify credentials not found - using fallback products');
+  if (import.meta.env.DEV) {
+    console.log('Shopify Storefront API client initialized');
+  }
+} else if (import.meta.env.DEV) {
+  console.warn('Shopify Storefront env not set — using local product data');
 }
 
 // GraphQL query to fetch products

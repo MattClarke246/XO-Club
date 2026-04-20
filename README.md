@@ -1,14 +1,13 @@
 # XO Club - Street Luxury
 
-A premium streetwear e-commerce platform built with React, TypeScript, and Vite. Features a bold, modern design with immersive animations, product previews, shopping cart functionality, and an integrated conversational AI assistant.
+A premium streetwear e-commerce platform built with React, TypeScript, and Vite. Features a bold, modern design with immersive animations, product previews, shopping cart functionality, and Shopify checkout.
 
 ## 🎨 Features
 
 - **Modern UI/UX**: Dark-themed, luxury streetwear aesthetic with smooth animations
 - **Product Catalog**: Browse premium streetwear with detailed product previews
 - **Shopping Cart**: Persistent cart with localStorage, quantity management, and quick add
-- **Checkout Flow**: Multi-step checkout with form validation and order processing
-- **AI Assistant**: Integrated ElevenLabs conversational AI widget
+- **Checkout**: Cart hands off to Shopify-hosted checkout
 - **Responsive Design**: Fully responsive across mobile, tablet, and desktop
 - **Animated Backgrounds**: Dynamic mesh gradients and particle effects
 - **Product Gallery**: Image carousels with thumbnail navigation
@@ -34,10 +33,11 @@ cd XO-Club
 npm install
 ```
 
-3. Create a `.env.local` file (optional):
+3. Create a `.env.local` file (recommended for checkout):
 ```bash
 cp .env.example .env.local
 ```
+Set **`VITE_SHOPIFY_STORE`** to your Shopify domain (e.g. `your-store.myshopify.com`). On **Vercel**, add the same under Project → Settings → Environment Variables. Without it, **Proceed to checkout** in the cart will show an error instead of redirecting.
 
 4. Start the development server:
 ```bash
@@ -65,9 +65,8 @@ npm run preview
 - **TypeScript** - Type safety
 - **Vite** - Build tool and dev server
 - **React Router** - Client-side routing
-- **Tailwind CSS** - Utility-first styling (via CDN)
+- **Tailwind CSS** - Utility-first styling (PostCSS build)
 - **Lucide React** - Icon library
-- **ElevenLabs Conversational AI** - AI assistant integration
 
 ## 📁 Project Structure
 
@@ -78,12 +77,13 @@ npm run preview
 │   ├── Hero.tsx        # Landing hero section
 │   ├── ProductCard.tsx # Product display card
 │   ├── ProductPreviewModal.tsx # Product detail modal
-│   ├── CartSidebar.tsx # Shopping cart sidebar
+│   ├── CartSidebar.tsx # Shopping cart sidebar (Shopify checkout)
 │   ├── AnimatedBackground.tsx # Animated background effects
 │   └── SocialProof.tsx # Social proof section
 ├── pages/              # Page components
 │   ├── Home.tsx        # Homepage
-│   └── Checkout.tsx    # Checkout page
+│   ├── Shop.tsx        # Product catalog
+│   └── Favorites.tsx   # Saved favorites
 ├── types.ts            # TypeScript type definitions
 ├── App.tsx             # Main app component
 └── index.tsx           # App entry point

@@ -19,7 +19,7 @@ Your website now uses **Shopify Buy Button** integration:
 
 ### Step 1: Add Products to Shopify
 
-1. Go to **Shopify Admin**: `admin.shopify.com/store/xo-club-test`
+1. Go to **Shopify Admin**: `admin.shopify.com/store/your-store-name`
 2. Navigate to **Products** → **Add product**
 3. For each product, add:
 
@@ -53,7 +53,7 @@ For each product, you need:
 #### Method 1: From Product URL
 
 1. In Shopify Admin → **Products** → Click on a product
-2. Look at the URL: `admin.shopify.com/store/xo-club-test/products/PRODUCT_ID`
+2. Look at the URL: `admin.shopify.com/store/your-store-name/products/PRODUCT_ID`
 3. The number after `/products/` is your **Product ID**
 4. The product handle is in the URL or under **Search engine listing preview**
 
@@ -67,7 +67,7 @@ For each product, you need:
 
 1. In product page → **Variants** section
 2. Click on a variant
-3. Look at URL: `admin.shopify.com/store/xo-club-test/products/PRODUCT_ID/variants/VARIANT_ID`
+3. Look at URL: `admin.shopify.com/store/your-store-name/products/PRODUCT_ID/variants/VARIANT_ID`
 4. The number after `/variants/` is your **Variant ID**
 
 ---
@@ -151,10 +151,10 @@ For each product, you need:
 2. Add:
 
 ```env
-VITE_SHOPIFY_STORE=xo-club-test.myshopify.com
+VITE_SHOPIFY_STORE=your-store-name.myshopify.com
 ```
 
-**Note**: Replace `xo-club-test` with your actual Shopify store name.
+**Note**: Replace `your-store-name` with your actual Shopify store name.
 
 ---
 
@@ -192,7 +192,7 @@ VITE_SHOPIFY_STORE=xo-club-test.myshopify.com
 ### Buy Button Flow
 1. User clicks "BUY NOW" on product
 2. Website finds Shopify variant ID for selected size
-3. Redirects to: `https://xo-club-test.myshopify.com/cart/VARIANT_ID:1`
+3. Redirects to: `https://your-store-name.myshopify.com/cart/VARIANT_ID:1`
 4. Shopify checkout opens with that product
 5. User completes order on Shopify
 6. Order appears in Shopify Dashboard
@@ -201,7 +201,7 @@ VITE_SHOPIFY_STORE=xo-club-test.myshopify.com
 1. User adds items to cart
 2. User clicks "PROCEED TO CHECKOUT"
 3. Website builds cart URL with all variant IDs
-4. Redirects to: `https://xo-club-test.myshopify.com/cart/VARIANT_ID1:QTY1,VARIANT_ID2:QTY2`
+4. Redirects to: `https://your-store-name.myshopify.com/cart/VARIANT_ID1:QTY1,VARIANT_ID2:QTY2`
 5. Shopify checkout opens with all items
 6. User completes order on Shopify
 
@@ -210,7 +210,7 @@ VITE_SHOPIFY_STORE=xo-club-test.myshopify.com
 ## Quick Reference: Finding IDs
 
 ### Product ID
-- URL: `admin.shopify.com/store/xo-club-test/products/123456`
+- URL: `admin.shopify.com/store/your-store-name/products/123456`
 - Product ID: `123456`
 
 ### Product Handle
@@ -219,7 +219,7 @@ VITE_SHOPIFY_STORE=xo-club-test.myshopify.com
 
 ### Variant ID
 - Product page → Variants section → Click variant
-- URL: `admin.shopify.com/store/xo-club-test/products/123456/variants/789012`
+- URL: `admin.shopify.com/store/your-store-name/products/123456/variants/789012`
 - Variant ID: `789012`
 
 ---

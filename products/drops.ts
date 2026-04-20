@@ -2,7 +2,7 @@
 // Edit this file to add new products (drops)
 // Run `npm run sync-shopify` to sync products to Shopify
 
-import { ProductDrop } from '../lib/shopify-admin';
+import type { ProductDrop } from '../types';
 
 export const PRODUCT_DROPS: ProductDrop[] = [
   {

@@ -21,7 +21,7 @@ const SocialProof: React.FC = () => {
 
       {/* Marquee Animation */}
       <div className="flex w-full overflow-hidden">
-        <div className="flex animate-[marquee_30s_linear_infinite] whitespace-nowrap">
+        <div className="flex animate-marquee whitespace-nowrap">
           {[...socialImages, ...socialImages].map((img, idx) => (
             <div key={`${img.id}-${idx}`} className="w-[200px] h-[250px] md:w-[300px] md:h-[400px] px-2 flex-shrink-0 group">
               <div className="w-full h-full relative overflow-hidden rounded-xl grayscale hover:grayscale-0 transition-all duration-700">
@@ -35,12 +35,6 @@ const SocialProof: React.FC = () => {
         </div>
       </div>
 
-      <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}} />
     </section>
   );
 };
