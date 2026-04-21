@@ -89,12 +89,14 @@ npm run preview
 └── index.tsx           # App entry point
 ```
 
+Detailed layout notes: see `docs/PROJECT_STRUCTURE.md`.
+Operations checklist pack: see `docs/ops/README.md`.
+
 ## 🎯 Key Functionality
 
 - **Shopping Cart**: Items persist in localStorage
 - **Product Management**: Add/remove items, update quantities
-- **Order Processing**: Integrated with Google Apps Script for order handling
-- **Form Validation**: Client-side validation for checkout
+- **Checkout Redirect**: Cart builds Shopify cart URL using selected variant IDs
 - **Responsive Navigation**: Mobile-friendly menu system
 
 ## 📝 Environment Variables
@@ -102,12 +104,14 @@ npm run preview
 Create a `.env.local` file with:
 
 ```env
-VITE_GOOGLE_APPS_SCRIPT_URL=your_google_apps_script_url_here
+VITE_SHOPIFY_STORE=your-store.myshopify.com
+# Optional (only if using live Storefront API in lib/shopify.ts)
+# VITE_SHOPIFY_STOREFRONT_TOKEN=your_public_storefront_token
 ```
 
 ## 🎨 Customization
 
-- Product data: Edit `MOCK_PRODUCTS` in `pages/Home.tsx`
+- Product data: Edit `products/drops.ts`
 - Styling: Modify Tailwind classes or add custom CSS in `index.css`
 - Colors: Update Tailwind config or use inline classes for brand colors
 

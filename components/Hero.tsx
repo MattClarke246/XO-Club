@@ -9,8 +9,8 @@ const Hero: React.FC = () => {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       setMousePos({
-        x: (e.clientX / window.innerWidth - 0.5) * 20,
-        y: (e.clientY / window.innerHeight - 0.5) * 20
+        x: (e.clientX / window.innerWidth - 0.5) * 8,
+        y: (e.clientY / window.innerHeight - 0.5) * 8
       });
     };
     window.addEventListener('mousemove', handleMouseMove);
@@ -30,7 +30,7 @@ const Hero: React.FC = () => {
         {/* Visual Media with Float Effect */}
         <div 
           className="relative w-[280px] h-[380px] md:w-[450px] md:h-[600px] mb-[-6rem] md:mb-[-12rem] transition-transform duration-300 ease-out"
-          style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px) rotateX(${-mousePos.y * 0.5}deg) rotateY(${mousePos.x * 0.5}deg)` }}
+          style={{ transform: `translate(${mousePos.x}px, ${mousePos.y}px) rotateX(${-mousePos.y * 0.15}deg) rotateY(${mousePos.x * 0.15}deg)` }}
         >
           <img 
             src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800" 
@@ -44,19 +44,20 @@ const Hero: React.FC = () => {
         <div className="max-w-4xl">
           <h1 className="text-[16vw] md:text-[12rem] font-black text-tight text-white mb-6 uppercase drop-shadow-2xl">
             STREET<br />
-            ELITE
+            ROOTED
           </h1>
-          <p className="text-gray-400 text-sm md:text-lg max-w-lg mx-auto mb-10 font-medium tracking-wide px-4 uppercase">
-            ELITE PIECES. NO FILLER. <br />THE NEXT GEN OF STREETWEAR.
+          <p className="text-gray-400 text-sm md:text-lg max-w-xl mx-auto mb-10 font-medium tracking-wide px-4 uppercase">
+            INDEPENDENT LABEL. CURATED DROPS. <br />
+            CHECKOUT ON SHOPIFY.
           </p>
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-            <Link to="/shop" className="group relative bg-white text-black px-12 py-5 font-black text-xs tracking-[0.2em] rounded-full overflow-hidden transition-all hover:pr-14 hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] hover:scale-105 active:scale-95 text-center">
-              <span className="relative z-10">GET IT NOW</span>
+            <Link to="/shop" className="group relative bg-white text-black px-12 py-5 font-black text-xs tracking-[0.2em] rounded-full overflow-hidden transition-all hover:pr-14 hover:shadow-[0_0_24px_rgba(255,255,255,0.25)] hover:scale-[1.02] active:scale-95 text-center">
+              <span className="relative z-10">SHOP THE STORE</span>
               <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300" size={18} />
             </Link>
             <button onClick={() => window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })} className="px-12 py-5 border border-white/20 text-white font-bold text-xs tracking-[0.2em] rounded-full hover:bg-white/5 transition-all uppercase active:scale-95">
-              STYLE IT
+              SEE WHAT&apos;S IN
             </button>
           </div>
         </div>

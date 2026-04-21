@@ -15,8 +15,8 @@ const SocialProof: React.FC = () => {
   return (
     <section className="py-32 overflow-hidden bg-black/50">
       <div className="container mx-auto px-6 mb-16">
-        <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-4">JOIN THE CLUB</h2>
-        <p className="text-gray-500 max-w-xl">Our community sets the pace. Tag <span className="text-white font-bold">#XOClub</span> to be featured in the global archive.</p>
+        <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-4">COMMUNITY</h2>
+        <p className="text-gray-500 max-w-xl">Show your fit—tag <span className="text-white font-bold">#XOClub</span> and we may spotlight you here as the feed grows.</p>
       </div>
 
       {/* Marquee Animation */}

@@ -8,9 +8,9 @@ const AnimatedBackground: React.FC = () => {
       <div className="absolute inset-0 bg-[#000]" />
       
       {/* Animated Light Beams */}
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-900/10 blur-[120px] rounded-full animate-pulse" 
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-blue-900/[0.07] blur-[120px] rounded-full animate-pulse" 
            style={{ animationDuration: '8s' }} />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-purple-900/10 blur-[140px] rounded-full animate-pulse"
+      <div className="absolute bottom-[-10%] right-[-10%] w-[70%] h-[70%] bg-purple-900/[0.07] blur-[140px] rounded-full animate-pulse"
            style={{ animationDuration: '12s', animationDelay: '2s' }} />
       
       {/* Particle Drift Effect (CSS only SVG pattern) */}

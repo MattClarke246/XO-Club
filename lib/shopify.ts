@@ -5,6 +5,12 @@ import { Product } from '../types';
 const SHOPIFY_STORE = import.meta.env.VITE_SHOPIFY_STORE || '';
 const SHOPIFY_STOREFRONT_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN || '';
 
+const devLog = (...args: unknown[]) => {
+  if (import.meta.env.DEV) {
+    console.log(...args);
+  }
+};
+
 let storefrontClient: ReturnType<typeof createStorefrontApiClient> | null = null;
 
 if (SHOPIFY_STORE && SHOPIFY_STOREFRONT_TOKEN) {
@@ -13,11 +19,9 @@ if (SHOPIFY_STORE && SHOPIFY_STOREFRONT_TOKEN) {
     apiVersion: '2024-01',
     publicAccessToken: SHOPIFY_STOREFRONT_TOKEN,
   });
-  if (import.meta.env.DEV) {
-    console.log('Shopify Storefront API client initialized');
-  }
-} else if (import.meta.env.DEV) {
-  console.warn('Shopify Storefront env not set — using local product data');
+  devLog('Shopify Storefront API client initialized');
+} else {
+  devLog('Shopify Storefront env not set — using local product data');
 }
 
 // GraphQL query to fetch products
@@ -135,7 +139,7 @@ function transformShopifyProduct(shopifyProduct: any): Product {
 // Fetch products from Shopify
 export async function getShopifyProducts(limit: number = 20): Promise<Product[]> {
   if (!storefrontClient) {
-    console.warn('⚠️ Shopify client not initialized - returning empty array');
+    devLog('Shopify client not initialized - returning empty array');
     return [];
   }
 
@@ -148,14 +152,13 @@ export async function getShopifyProducts(limit: number = 20): Promise<Product[]>
       const products = response.data.products.edges.map((edge: any) => 
         transformShopifyProduct(edge.node)
       );
-      console.log(`✅ Fetched ${products.length} products from Shopify`);
+      devLog(`Fetched ${products.length} products from Shopify`);
       return products;
     }
 
     return [];
   } catch (error: any) {
-    console.error('❌ Error fetching products from Shopify:', error);
-    console.error('Error details:', error.message);
+    devLog('Error fetching products from Shopify:', error?.message || error);
     return [];
   }
 }
@@ -237,7 +240,7 @@ export async function getShopifyProductByHandle(handle: string): Promise<Product
 
     return null;
   } catch (error: any) {
-    console.error('❌ Error fetching product from Shopify:', error);
+    devLog('Error fetching product from Shopify:', error?.message || error);
     return null;
   }
 }
@@ -253,19 +256,6 @@ export function getVariantId(product: Product & { shopifyVariants?: any[] }, siz
   );
 
   return variant?.id || product.shopifyVariants[0]?.id || null;
-}
-
-// Create Shopify checkout URL
-export function createShopifyCheckoutUrl(productId: string, variantId: string, quantity: number = 1): string {
-  const store = SHOPIFY_STORE.replace('.myshopify.com', '');
-  return `https://${store}.myshopify.com/cart/${variantId}:${quantity}`;
-}
-
-// Create checkout URL for multiple items
-export function createShopifyCheckoutUrlForCart(items: Array<{ variantId: string; quantity: number }>): string {
-  const store = SHOPIFY_STORE.replace('.myshopify.com', '');
-  const cartItems = items.map(item => `${item.variantId}:${item.quantity}`).join(',');
-  return `https://${store}.myshopify.com/cart/${cartItems}`;
 }
 
 export { storefrontClient };

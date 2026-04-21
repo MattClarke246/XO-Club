@@ -39,7 +39,7 @@ const BrandStoryModal: React.FC<BrandStoryModalProps> = ({ isOpen, onClose }) =>
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
             <div className="absolute bottom-8 left-8 md:left-12 right-8">
               <h2 className="text-4xl md:text-6xl font-black text-tight mb-2 uppercase">OUR STORY</h2>
-              <p className="text-blue-500 font-black tracking-[0.3em] text-xs uppercase">THE XO MANIFESTO</p>
+              <p className="text-blue-500 font-black tracking-[0.3em] text-xs uppercase">INDEPENDENT &amp; BUILDING</p>
             </div>
           </div>
 
@@ -47,36 +47,36 @@ const BrandStoryModal: React.FC<BrandStoryModalProps> = ({ isOpen, onClose }) =>
           <div className="p-8 md:p-12 space-y-8">
             <div className="space-y-6 text-gray-300 leading-relaxed">
               <p className="text-lg md:text-xl font-medium leading-relaxed">
-                <span className="text-white font-bold">Built from difference, not being comfortable with where you are.</span> This brand lives at the intersection of fashion, sport, and urban culture pushed beyond the limits of this world. Inspired by extraterrestrial energy, we design for those who move different, think different, and refuse to blend in.
+                <span className="text-white font-bold">XO Club started as a small, hands-on project—not a corporate fashion house.</span> We care about culture, sport, and what people actually wear day to day. The goal is straightforward: pieces that feel right on the street, sold through a store we can stand behind.
               </p>
 
               <div className="border-l-4 border-blue-500 pl-6 space-y-4">
                 <p className="text-base md:text-lg text-white font-semibold">
-                  In a world where everything is accessible, XO Club was created for what isn't.
+                  We ship and scale honestly: the storefront runs on Shopify, so taxes, payments, and fulfillment follow the same rails customers already trust.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <p className="text-base md:text-lg">
-                  Born from the idea that <span className="text-white font-semibold">connection is currency and presence is power</span>. XO Club isn't just a brand—it's an experience reserved for those who move different.
+                  That means <span className="text-white font-semibold">no pretending we built a custom bank-grade checkout in-house</span>—and no mythmaking about &quot;access&quot; you can&apos;t actually get. If you like the direction, wear it and tell a friend.
                 </p>
               </div>
 
               <div className="bg-white/5 p-8 rounded-2xl border border-white/10 space-y-4">
-                <h3 className="text-xl md:text-2xl font-black text-blue-500 uppercase tracking-widest">THE XO CODE</h3>
+                <h3 className="text-xl md:text-2xl font-black text-blue-500 uppercase tracking-widest">WHAT XO STANDS FOR HERE</h3>
                 <p className="text-lg md:text-xl font-medium text-white mb-4">
-                  The XO represents more than a symbol, it's a code:
+                  A simple shorthand we hold ourselves to:
                 </p>
-                <div className="space-y-3 text-2xl font-black tracking-widest">
-                  <div className="text-white"><span className="text-blue-500">X</span> = EXCLUSIVITY</div>
-                  <div className="text-white"><span className="text-blue-500">O</span> = ORBIT</div>
+                <div className="space-y-3 text-xl md:text-2xl font-black tracking-widest">
+                  <div className="text-white"><span className="text-blue-500">X</span> = CROSSING OUT NOISE</div>
+                  <div className="text-white"><span className="text-blue-500">O</span> = OPEN CIRCLE (COMMUNITY)</div>
                 </div>
               </div>
 
               <div className="space-y-4 pt-4 border-t border-white/5">
                 <p className="text-xl md:text-3xl font-black text-white tracking-widest uppercase">
-                  A circle of influence...<br/>
-                  <span className="text-blue-500 text-2xl md:text-4xl block mt-4">You either belong or you don't.</span>
+                  We&apos;re early.<br/>
+                  <span className="text-blue-500 text-2xl md:text-4xl block mt-4">If the work resonates, you&apos;re already part of it.</span>
                 </p>
               </div>
             </div>
@@ -87,7 +87,7 @@ const BrandStoryModal: React.FC<BrandStoryModalProps> = ({ isOpen, onClose }) =>
                 onClick={onClose}
                 className="w-full md:w-auto bg-white text-black px-12 py-5 rounded-full font-black text-xs tracking-[0.3em] hover:bg-blue-500 hover:text-white transition-all duration-500 uppercase active:scale-95 shadow-2xl"
               >
-                EXPLORE THE DROP
+                BROWSE THE SHOP
               </button>
             </div>
           </div>

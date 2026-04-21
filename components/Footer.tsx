@@ -16,8 +16,8 @@ const Footer: React.FC = () => {
           
           <div className="col-span-2">
             <a href="#/" className="text-3xl font-black tracking-tighter mb-8 block">XO CLUB<span className="text-blue-500">.</span></a>
-            <p className="text-gray-500 max-w-xs mb-8 text-sm leading-relaxed font-light">
-              Designing the future of urban luxury. Inspired by culture, driven by creativity.
+            <p className="text-gray-500 max-w-sm mb-8 text-sm leading-relaxed font-light">
+              Small independent label—streetwear we stand behind. Orders finish on Shopify checkout.
             </p>
             <div className="flex items-center space-x-6 text-gray-500">
               <a href="https://instagram.com" target="_blank" rel="noreferrer"><Instagram size={20} className="hover:text-white transition-colors cursor-pointer" /></a>
@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
 
         <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[10px] text-gray-600 font-bold tracking-[0.2em] uppercase">
-            © 2025 XO CLUB LTD. ALL RIGHTS RESERVED.
+            © 2026 XO CLUB LTD. ALL RIGHTS RESERVED.
           </p>
           <div className="flex items-center gap-6 grayscale opacity-30">
             <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-4" />

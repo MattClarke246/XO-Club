@@ -9,7 +9,7 @@ export const PRODUCT_DROPS: ProductDrop[] = [
     id: '1',
     name: 'RETRO JORDAN 1 HIGH',
     price: 25,
-    description: 'Iconic high-top silhouette with premium leather construction. Classic colorway featuring the legendary Air Jordan design. High-top design for maximum support and timeless style. The ultimate sneaker for collectors and streetwear enthusiasts.',
+    description: 'High-top silhouette with leather upper and classic color blocking. Lace-up closure, padded collar, rubber cupsole. Built for daily wear; details match the retro basketball shape.',
     images: [
       'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1605348532760-6753d2c43329?auto=format&fit=crop&q=80&w=800',
@@ -32,7 +32,7 @@ export const PRODUCT_DROPS: ProductDrop[] = [
     id: '2',
     name: 'SUPREME BOX LOGO HOODIE',
     price: 25,
-    description: 'Premium heavyweight fleece hoodie featuring the iconic box logo. French terry cotton construction with brushed interior for ultimate comfort. Ribbed cuffs and hem, adjustable drawstring hood, and roomy front pocket. The streetwear essential that never goes out of style.',
+    description: 'Heavyweight fleece hoodie with a centered logo hit. Cotton-blend body, brushed interior, ribbed cuffs and hem, kangaroo pocket, and drawstring hood. Layer-friendly for cold weather.',
     images: [
       'https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800',
@@ -53,7 +53,7 @@ export const PRODUCT_DROPS: ProductDrop[] = [
     id: '3',
     name: 'TRAVIS SCOTT CACTUS JACK BEANIE',
     price: 25,
-    description: 'Cactus Jack branded beanie with embroidered logo. Soft acrylic knit construction with stretch fit. One size fits most. Folded cuff design for versatile styling. The perfect accessory to complete any streetwear fit. Limited edition collaboration piece.',
+    description: 'Knit beanie with front embroidery. Acrylic blend with stretch; folded cuff. One size cut to fit most adults. Cold-weather layer for street fits.',
     images: [
       'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&q=80&w=800',
@@ -71,7 +71,7 @@ export const PRODUCT_DROPS: ProductDrop[] = [
     id: '4',
     name: 'NORTH FACE RECON BACKPACK',
     price: 25,
-    description: 'Durable 30L capacity backpack built for urban adventures. Water-resistant 600D recycled polyester construction. Padded laptop compartment, multiple organization pockets, and adjustable shoulder straps. Front bungee cord and top haul handle. The ultimate everyday carry for city life and beyond.',
+    description: 'Roughly 30L pack volume. Recycled polyester shell with a water-resistant finish. Padded laptop sleeve, organizer pockets, adjustable straps, front bungee, top handle. For commute, campus, and travel.',
     images: [
       'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=800',

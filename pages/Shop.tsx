@@ -25,7 +25,7 @@ const MOCK_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?auto=format&fit=crop&q=80&w=800'
     ],
-    description: 'Iconic high-top silhouette with premium leather construction. Classic colorway featuring the legendary Air Jordan design. High-top design for maximum support and timeless style. The ultimate sneaker for collectors and streetwear enthusiasts.', 
+    description: 'High-top silhouette with leather upper and classic color blocking. Lace-up closure, padded collar, rubber cupsole. Built for daily wear; details match the retro basketball shape.', 
     sizes: ['8', '9', '10', '11', '12'],
     isNew: true,
     shopifyProductId: '8351909675178',
@@ -49,7 +49,7 @@ const MOCK_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&q=80&w=800'
     ],
-    description: 'Premium heavyweight fleece hoodie featuring the iconic box logo. French terry cotton construction with brushed interior for ultimate comfort. Ribbed cuffs and hem, adjustable drawstring hood, and roomy front pocket. The streetwear essential that never goes out of style.', 
+    description: 'Heavyweight fleece hoodie with a centered logo hit. Cotton-blend body, brushed interior, ribbed cuffs and hem, kangaroo pocket, and drawstring hood. Layer-friendly for cold weather.', 
     sizes: ['M', 'L', 'XL', 'XXL'],
     isLimited: true,
     shopifyProductId: '8351919276202',
@@ -72,7 +72,7 @@ const MOCK_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&q=80&w=800'
     ],
-    description: 'Cactus Jack branded beanie with embroidered logo. Soft acrylic knit construction with stretch fit. One size fits most. Folded cuff design for versatile styling. The perfect accessory to complete any streetwear fit. Limited edition collaboration piece.', 
+    description: 'Knit beanie with front embroidery. Acrylic blend with stretch; folded cuff. One size cut to fit most adults. Cold-weather layer for street fits.', 
     sizes: ['ONE SIZE'],
     isNew: true,
     shopifyProductId: '8351920455850',
@@ -92,7 +92,7 @@ const MOCK_PRODUCTS: Product[] = [
       'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&q=80&w=800',
       'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&q=80&w=800'
     ],
-    description: 'Durable 30L capacity backpack built for urban adventures. Water-resistant 600D recycled polyester construction. Padded laptop compartment, multiple organization pockets, and adjustable shoulder straps. Front bungee cord and top haul handle. The ultimate everyday carry for city life and beyond.', 
+    description: 'Roughly 30L pack volume. Recycled polyester shell with a water-resistant finish. Padded laptop sleeve, organizer pockets, adjustable straps, front bungee, top handle. For commute, campus, and travel.', 
     sizes: ['ONE SIZE'],
     isLimited: true,
     shopifyProductId: '8351921242282',
@@ -121,8 +121,8 @@ const Shop: React.FC<ShopProps> = ({ onPreview, onAddToCart, favorites, onToggle
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <h1 className="text-6xl md:text-8xl font-black text-tight mb-4 uppercase">DROP 042</h1>
-              <p className="text-blue-500 font-black tracking-[0.3em] uppercase text-xs">WINTER ARCHIVE // NEW CURATION</p>
+              <h1 className="text-6xl md:text-8xl font-black text-tight mb-4 uppercase">SHOP</h1>
+              <p className="text-blue-500 font-black tracking-[0.3em] uppercase text-xs">IN SEASON · AVAILABILITY UPDATES WITH STOCK</p>
             </div>
             <p className="text-white/60 text-sm font-bold tracking-[0.2em] uppercase">
               {MOCK_PRODUCTS.length} PIECES

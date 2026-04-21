@@ -86,8 +86,8 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                   <ShoppingBag size={40} className="text-gray-700" />
                 </div>
                 <h3 className="text-lg font-black uppercase mb-4 tracking-tighter">Your bag is empty</h3>
-                <p className="text-gray-500 text-xs font-bold mb-10 max-w-[200px] leading-relaxed uppercase tracking-widest">
-                  Looks like you haven't added any elite pieces yet.
+                <p className="text-gray-500 text-xs font-bold mb-10 max-w-[220px] leading-relaxed uppercase tracking-widest">
+                  Add something from the shop—checkout happens on Shopify.
                 </p>
                 <button 
                   onClick={onClose} 
@@ -144,7 +144,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                     <p className="text-3xl font-black tracking-tighter">${total.toFixed(2)}</p>
                   </div>
                   <p className="text-[9px] text-gray-600 font-black uppercase text-right tracking-widest">
-                    FREE EXPRESS<br />SHIPPING APPLIED
+                    Taxes &amp; shipping<br />at checkout
                   </p>
                 </div>
                 
@@ -159,7 +159,7 @@ const CartSidebar: React.FC<CartSidebarProps> = ({
                 </button>
                 
                 <p className="text-[9px] text-center text-gray-700 font-black tracking-[0.3em] uppercase">
-                  Secure 256-bit encrypted checkout
+                  You&apos;ll complete payment on Shopify&apos;s secure checkout
                 </p>
               </>
             )}
